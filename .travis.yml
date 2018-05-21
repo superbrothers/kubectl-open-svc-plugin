@@ -1,0 +1,16 @@
+language: go
+go:
+- "1.10"
+script:
+- make build
+before_deploy:
+- make dist checksum
+deploy:
+  provider: releases
+  api_key:
+    secure: e2o1FlONjOTAv8xoT7D4ropiGo8jHP/UUZNjwEEWYtTAZUuVcRxjCv9nmp4euDKldSebg1K6vbo5dFGpM6RROPlI8QaIyfX8CYqG/viDcufcS4LWimJ3E+1mK2gGSiVfzqOviPUQf5dspY7xpwrzu8a9nfe+TSuNbPAjIXH7K2aZ3CpWvYuH0/UV73NkfFFk5g6LdGo+lQl73pCcaipWiBNv0a98Bs4ivgqB2YpkPwovLt/wC9nUc11y2g1ecQeYy75ECIUeL3lMRRuu+zWBxiysQIclKVA94YvpqzVO1QrmRRZNp/0mjfEOFyqH3CTJvShAyg/NbhEvIyhmmAGJKd/HVXegwrRHH/NKFUndLKrkX8bmRckuB5Pwmrf+oRj5f+xw2yJDQsZ/9YRXjHo2a3N0GcQ5VmJpo78YhpJ4mo9DVEDMI7LhAFUfGHFO8IMns0ia38PH7pMXWRsENl774utHRp9nBNTApQSJxcKOZ5zMkbUblQV/29NaZQMUlh2Qffy5X0OQ3qpCEYT951GlX2Cp5Aef7stQwlpTFItNXbuD5prRgh3iuWwkZPmK5EabgE5f/PO5vpH1e3/um0CB4QcIW8LzHsbm2NWIFVXa7p76Ec0Qkx6NNDcGIuXeBGLbNx3XwWmllHffRRZoWXayFJIv5XG9Fe0Mf+JQp5pLsYU=
+  file_glob: true
+  file: _dist/*
+  skip_cleanup: true
+  on:
+    tags: true

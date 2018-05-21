@@ -1,0 +1,5 @@
+name: "service"
+shortDesc: "Open the Kubernetes URL(s) for the specified service in your browser."
+longDesc: "Open the Kubernetes URL(s) for the specified service in your browser through a local proxy server using kubectl proxy."
+example: "# Open service/kubernetes-dashboard in kube-system namespace.\nkubectl plugin service kubernetes-dashboard -n kube-system"
+command: "./service"
