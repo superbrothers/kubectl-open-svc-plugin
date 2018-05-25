@@ -18,6 +18,13 @@ Use "kubectl options" for a list of global command-line options (applies to all 
 
 ## Install the plugin
 
+If you are on macOS, you can install with homebrew:
+```
+$ brew tap superbrothers/kubectl-service-plugin
+$ brew install kubectl-service-plugin
+```
+
+If you are on Linux, you can install with the following steps:
 ```
 $ curl -sL -o service.zip https://github.com/superbrothers/kubectl-service-plugin/releases/download/$(curl -sL https://raw.githubusercontent.com/superbrothers/kubectl-service-plugin/master/version.txt)/service-$(uname | tr '[:upper:]' '[:lower:]')-amd64.zip
 $ mkdir -p ~/.kube/plugins/service
