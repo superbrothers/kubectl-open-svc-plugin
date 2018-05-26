@@ -2,6 +2,8 @@
 
 This is a kubectl plugin that open the Kubernetes URL(s) for the specified service in your browser.
 
+![Screenshot](./screenshots/kubectl-service-plugin.gif)
+
 ```
 $ kubectl plugin service -h
 Open the Kubernetes URL(s) for the specified service in your browser through a local proxy server using kubectl proxy.
