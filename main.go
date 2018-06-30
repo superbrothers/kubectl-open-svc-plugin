@@ -5,22 +5,23 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
+	"os/signal"
 	"strconv"
-	"time"
 
+	"github.com/golang/glog"
 	"github.com/pkg/browser"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	utilnet "k8s.io/apimachinery/pkg/util/net"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"k8s.io/kubectl/pkg/pluginutils"
+	"k8s.io/kubernetes/pkg/kubectl/proxy"
 	// Initialize all known client auth plugins.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 )
 
 const (
-	namespace = "kube-system"
-	proxyPort = "9001"
+	proxyAddress = "127.0.0.1"
 )
 
 func init() {
@@ -36,6 +37,17 @@ func main() {
 	}
 
 	svcName := os.Args[1]
+	port, err := strconv.Atoi(os.Getenv("KUBECTL_PLUGINS_LOCAL_FLAG_PORT"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := service(svcName, port); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func service(svcName string, port int) error {
 	restConfig, kubeConfig, err := pluginutils.InitClientAndConfig()
 	if err != nil {
 		log.Fatalf("Failed to init client and config: %v", err)
@@ -46,10 +58,11 @@ func main() {
 
 	svc, err := client.CoreV1().Services(namespace).Get(svcName, metav1.GetOptions{})
 	if err != nil {
-		log.Fatalf("Failed to get service/%s in %s namespace: %v\n", svcName, namespace, err)
+		return fmt.Errorf("Failed to get service/%s: %v\n", svcName, err)
 	}
 
 	var urls []string
+	var paths []string
 
 	if len(svc.Status.LoadBalancer.Ingress) > 0 {
 		ingress := svc.Status.LoadBalancer.Ingress[0]
@@ -75,33 +88,56 @@ func main() {
 			// format is <scheme>:<service-name>:<service-port-name>
 			name = utilnet.JoinSchemeNamePort(scheme, svc.ObjectMeta.Name, port.Name)
 
-			urls = append(urls, "http://127.0.0.1:"+proxyPort+"/api/v1/namespaces/"+namespace+"/services/"+name+"/proxy")
+			paths = append(paths, "/api/v1/namespaces/"+namespace+"/services/"+name+"/proxy")
 		}
 	}
 
-	if len(urls) == 0 {
-		log.Fatalf("Looks like service/%s in %s namespace is a headless service\n", svcName, namespace)
+	if len(urls) == 0 && len(paths) == 0 {
+		return fmt.Errorf("Looks like service/%s is a headless service\n", svcName)
 	}
 
-	// TODO: implements a proxy server instead of using kubectl proxy
-	cmd := exec.Command("kubectl", "proxy", "--port", proxyPort)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	if err := cmd.Start(); err != nil {
-		log.Fatal(err)
+	server, err := newProxyServer(restConfig)
+	if err != nil {
+		return err
 	}
 
-	time.Sleep(100 * time.Millisecond) // Wait for running kubectl proxy...
-	fmt.Printf("Opening service/%s in %s namespace in the default browser...\n", svcName, namespace)
+	l, err := server.Listen(proxyAddress, port)
+	if err != nil {
+		return err
+	}
 
+	addr := l.Addr().String()
+
+	for _, path := range paths {
+		urls = append(urls, fmt.Sprintf("http://%s%s", addr, path))
+	}
+
+	fmt.Printf("Starting to serve on %s\n", addr)
+	go func() {
+		glog.Fatal(server.ServeOnListener(l))
+	}()
+
+	fmt.Printf("Opening service/%s in the default browser...\n", svcName)
 	for _, url := range urls {
 		if err := browser.OpenURL(url); err != nil {
-			log.Fatalf("Failed to open %s in the default browser\n", url)
+			return fmt.Errorf("Failed to open %s in the default browser\n", url)
 		}
 	}
 
-	if err := cmd.Wait(); err != nil {
-		log.Fatal(err)
+	// receive signals and exit
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+
+	return nil
+}
+
+func newProxyServer(cfg *rest.Config) (*proxy.Server, error) {
+	filter := &proxy.FilterServer{
+		AcceptPaths:   proxy.MakeRegexpArrayOrDie(proxy.DefaultPathAcceptRE),
+		RejectPaths:   proxy.MakeRegexpArrayOrDie(proxy.DefaultPathRejectRE),
+		AcceptHosts:   proxy.MakeRegexpArrayOrDie(proxy.DefaultHostAcceptRE),
+		RejectMethods: proxy.MakeRegexpArrayOrDie(proxy.DefaultMethodRejectRE),
 	}
+	return proxy.NewServer("", "/", "", filter, cfg)
 }

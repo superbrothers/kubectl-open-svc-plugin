@@ -37,6 +37,10 @@
   name = "k8s.io/kubectl"
   branch = "master"
 
+[[constraint]]
+  name = "k8s.io/kubernetes"
+  branch = "release-1.11"
+
 [[override]]
   name = "k8s.io/apimachinery"
   branch = "release-1.11"

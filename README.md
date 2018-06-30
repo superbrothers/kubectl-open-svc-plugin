@@ -12,6 +12,9 @@ Examples:
   # Open service/kubernetes-dashboard in kube-system namespace.
   kubectl plugin service kubernetes-dashboard -n kube-system
 
+Options:
+  -p, --port='8001': The port on which to run the proxy. Set to 0 to pick a random port.
+
 Usage:
   kubectl plugin service [flags] [options]
 

@@ -127,6 +127,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/mxk/go-flowrate"
+  packages = ["flowrate"]
+  revision = "cca7078d478f8520f85629ad7c68962d31ed7682"
+
+[[projects]]
+  branch = "master"
   name = "github.com/petar/GoLLRB"
   packages = ["llrb"]
   revision = "53be0d36a84c2a886ca057d34b6aa4468df9ccb4"
@@ -161,6 +167,8 @@
   packages = [
     "context",
     "context/ctxhttp",
+    "html",
+    "html/atom",
     "http/httpguts",
     "http2",
     "http2/hpack",
@@ -288,6 +296,7 @@
     "pkg/api/errors",
     "pkg/api/meta",
     "pkg/api/resource",
+    "pkg/apis/meta/internalversion",
     "pkg/apis/meta/v1",
     "pkg/apis/meta/v1/unstructured",
     "pkg/apis/meta/v1beta1",
@@ -308,9 +317,11 @@
     "pkg/util/clock",
     "pkg/util/errors",
     "pkg/util/framer",
+    "pkg/util/httpstream",
     "pkg/util/intstr",
     "pkg/util/json",
     "pkg/util/net",
+    "pkg/util/proxy",
     "pkg/util/runtime",
     "pkg/util/sets",
     "pkg/util/validation",
@@ -319,6 +330,7 @@
     "pkg/util/yaml",
     "pkg/version",
     "pkg/watch",
+    "third_party/forked/golang/netutil",
     "third_party/forked/golang/reflect"
   ]
   revision = "103fd098999dc9c0c88536f5c9ad2e5da39373ae"
@@ -395,9 +407,19 @@
   packages = ["pkg/pluginutils"]
   revision = "69904e713ca703a58d2e693b973ab639403b76f5"
 
+[[projects]]
+  branch = "release-1.11"
+  name = "k8s.io/kubernetes"
+  packages = [
+    "pkg/apis/core",
+    "pkg/kubectl/proxy",
+    "pkg/kubectl/util"
+  ]
+  revision = "38287de1e0c092e83216c39b4bbca3d5841f3b3e"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "98d401eec8a2faf43228cb2cbc17be2026c4f585f7c43b09f969d817a8d73a44"
+  inputs-digest = "7d5a6553ea6907f3ea5fb43b4b8e33171cde2ac78380c4729a2e182027fda528"
   solver-name = "gps-cdcl"
   solver-version = 1
