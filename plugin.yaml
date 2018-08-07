@@ -1,8 +1,8 @@
-name: "service"
+name: "open-svc"
 shortDesc: "Open the Kubernetes URL(s) for the specified service in your browser."
 longDesc: "Open the Kubernetes URL(s) for the specified service in your browser through a local proxy server using kubectl proxy."
-example: "# Open service/kubernetes-dashboard in kube-system namespace.\nkubectl plugin service kubernetes-dashboard -n kube-system"
-command: "./service"
+example: "# Open service/kubernetes-dashboard in kube-system namespace.\nkubectl plugin open-svc kubernetes-dashboard -n kube-system"
+command: "./open-svc"
 flags:
 - name: "port"
   shorthand: "p"

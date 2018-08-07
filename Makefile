@@ -1,4 +1,4 @@
-PLUGIN_NAME := service
+PLUGIN_NAME := open-svc
 OUT_DIR := ./_out
 DIST_DIR := ./_dist
 $(shell mkdir -p _dist)
