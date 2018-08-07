@@ -32,7 +32,7 @@ func init() {
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Fprintln(os.Stderr, "Usage: kubectl plugin service SERVICE_NAME")
+		fmt.Fprintln(os.Stderr, "Usage: kubectl plugin open-svc SERVICE_NAME")
 		os.Exit(1)
 	}
 
@@ -42,12 +42,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := service(svcName, port); err != nil {
+	if err := openService(svcName, port); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func service(svcName string, port int) error {
+func openService(svcName string, port int) error {
 	restConfig, kubeConfig, err := pluginutils.InitClientAndConfig()
 	if err != nil {
 		log.Fatalf("Failed to init client and config: %v", err)

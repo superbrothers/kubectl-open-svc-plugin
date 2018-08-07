@@ -1,22 +1,22 @@
-# kubectl plugin service SERVICE_NAME
+# kubectl plugin open-svc SERVICE_NAME
 
 This is a kubectl plugin that open the Kubernetes URL(s) for the specified service in your browser.
 
-![Screenshot](./screenshots/kubectl-service-plugin.gif)
+![Screenshot](./screenshots/kubectl-open-svc-plugin.gif)
 
 ```
-$ kubectl plugin service -h
+$ kubectl plugin open-svc -h
 Open the Kubernetes URL(s) for the specified service in your browser through a local proxy server using kubectl proxy.
 
 Examples:
   # Open service/kubernetes-dashboard in kube-system namespace.
-  kubectl plugin service kubernetes-dashboard -n kube-system
+  kubectl plugin open-svc kubernetes-dashboard -n kube-system
 
 Options:
   -p, --port='8001': The port on which to run the proxy. Set to 0 to pick a random port.
 
 Usage:
-  kubectl plugin service [flags] [options]
+  kubectl plugin open-svc [flags] [options]
 
 Use "kubectl options" for a list of global command-line options (applies to all commands).
 ```
@@ -25,15 +25,15 @@ Use "kubectl options" for a list of global command-line options (applies to all 
 
 If you are on macOS, you can install with homebrew:
 ```
-$ brew tap superbrothers/kubectl-service-plugin
-$ brew install kubectl-service-plugin
+$ brew tap superbrothers/kubectl-open-svc-plugin
+$ brew install kubectl-open-svc-plugin
 ```
 
 If you are on Linux, you can install with the following steps:
 ```
-$ curl -sL -o service.zip https://github.com/superbrothers/kubectl-service-plugin/releases/download/$(curl -sL https://raw.githubusercontent.com/superbrothers/kubectl-service-plugin/master/version.txt)/service-$(uname | tr '[:upper:]' '[:lower:]')-amd64.zip
-$ mkdir -p ~/.kube/plugins/service
-$ unzip service.zip -d ~/.kube/plugins/service
+$ curl -sL -o open-svc.zip https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/$(curl -sL https://raw.githubusercontent.com/superbrothers/kubectl-open-svc-plugin/master/version.txt)/open-svc-$(uname | tr '[:upper:]' '[:lower:]')-amd64.zip
+$ mkdir -p ~/.kube/plugins/open-svc
+$ unzip open-svc.zip -d ~/.kube/plugins/open-svc
 ```
 ## License
 
