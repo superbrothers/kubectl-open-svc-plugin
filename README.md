@@ -23,6 +23,11 @@ Use "kubectl options" for a list of global command-line options (applies to all 
 
 ## Install the plugin
 
+You can install this plugin with [krew](https://github.com/GoogleContainerTools/krew) that is package manager for kubectl plugins.
+```
+$ kubectl plugin install open-svc
+```
+
 If you are on macOS, you can install with homebrew:
 ```
 $ brew tap superbrothers/kubectl-open-svc-plugin
@@ -35,6 +40,7 @@ $ curl -sL -o open-svc.zip https://github.com/superbrothers/kubectl-open-svc-plu
 $ mkdir -p ~/.kube/plugins/open-svc
 $ unzip open-svc.zip -d ~/.kube/plugins/open-svc
 ```
+
 ## License
 
 This software is released under the MIT License.
