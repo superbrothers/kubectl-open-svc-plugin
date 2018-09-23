@@ -1,11 +1,11 @@
-PLUGIN_NAME := open-svc
+PLUGIN_NAME := kubectl-open_svc
 OUT_DIR := ./_out
 DIST_DIR := ./_dist
 $(shell mkdir -p _dist)
 
 .PHONY: build
 build:
-		go build -o $(PLUGIN_NAME) .
+		go build -o $(PLUGIN_NAME) cmd/$(PLUGIN_NAME).go
 
 .PHONY: cross
 build-cross: $(OUT_DIR)/linux-amd64/$(PLUGIN_NAME) $(OUT_DIR)/darwin-amd64/$(PLUGIN_NAME)
@@ -24,7 +24,7 @@ clean:
 		rm -rf $(OUT_DIR) $(DIST_DIR) $(PLUGIN_NAME)
 
 $(OUT_DIR)/%-amd64/$(PLUGIN_NAME):
-		GOOS=$* GOARCH=amd64 go build -o $@ .
+		GOOS=$* GOARCH=amd64 go build -o $@ cmd/$(PLUGIN_NAME).go
 
 $(DIST_DIR)/$(PLUGIN_NAME)-%-amd64.zip: $(OUT_DIR)/%-amd64/$(PLUGIN_NAME)
 		( \
@@ -32,6 +32,5 @@ $(DIST_DIR)/$(PLUGIN_NAME)-%-amd64.zip: $(OUT_DIR)/%-amd64/$(PLUGIN_NAME)
 			cp ../../version.txt . && \
 			cp ../../LICENSE . && \
 			cp ../../README.md . && \
-			cp ../../plugin.yaml . && \
 			zip -r ../../$@ * \
 		)
