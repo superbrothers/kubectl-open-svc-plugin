@@ -8,6 +8,15 @@
   version = "v0.24.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/Azure/go-ansiterm"
+  packages = [
+    ".",
+    "winterm"
+  ]
+  revision = "d6e3b3328b783f23731bc4d058875b0371ff8109"
+
+[[projects]]
   name = "github.com/Azure/go-autorest"
   packages = [
     "autorest",
@@ -19,10 +28,46 @@
   version = "v10.12.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/MakeNowJust/heredoc"
+  packages = ["."]
+  revision = "e9091a26100e9cfb2b6a8f470085bfa541931a91"
+
+[[projects]]
+  name = "github.com/Sirupsen/logrus"
+  packages = ["."]
+  revision = "a67f783a3814b8729bd2dac5780b5f78f8dbd64d"
+  version = "v1.1.0"
+
+[[projects]]
   name = "github.com/dgrijalva/jwt-go"
   packages = ["."]
   revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
   version = "v3.2.0"
+
+[[projects]]
+  name = "github.com/docker/docker"
+  packages = [
+    "pkg/term",
+    "pkg/term/windows"
+  ]
+  revision = "092cba3727bb9b4a2f0e922cd6c0f93ea270e363"
+  version = "v1.13.1"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/docker/spdystream"
+  packages = [
+    ".",
+    "spdy"
+  ]
+  revision = "bc6354cbbc295e925e4c611ffe90c1f287ee54db"
+
+[[projects]]
+  name = "github.com/evanphx/json-patch"
+  packages = ["."]
+  revision = "72bf35d0ff611848c1dc9df0f976c81192392fa5"
+  version = "v4.1.0"
 
 [[projects]]
   name = "github.com/ghodss/yaml"
@@ -109,9 +154,27 @@
   version = "v0.3.5"
 
 [[projects]]
+  name = "github.com/inconshreveable/mousetrap"
+  packages = ["."]
+  revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
+  version = "v1.0"
+
+[[projects]]
   name = "github.com/json-iterator/go"
   packages = ["."]
   revision = "f2b4162afba35581b6d4a50d3b8f34e33c144682"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/konsorten/go-windows-terminal-sequences"
+  packages = ["."]
+  revision = "b729f2633dfe35f4d1d8a32385f6685610ce1cb5"
+
+[[projects]]
+  name = "github.com/mitchellh/go-wordwrap"
+  packages = ["."]
+  revision = "9e67c67572bc5dd02aef930e2b0ae3c02a4b5a5c"
+  version = "v1.0.0"
 
 [[projects]]
   name = "github.com/modern-go/concurrent"
@@ -148,6 +211,23 @@
   name = "github.com/pkg/browser"
   packages = ["."]
   revision = "c90ca0c84f15f81c982e32665bffd8d7aac8f097"
+
+[[projects]]
+  name = "github.com/russross/blackfriday"
+  packages = ["."]
+  revision = "300106c228d52c8941d4b3de6054a6062a86dda3"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/shurcooL/sanitized_anchor_name"
+  packages = ["."]
+  revision = "86672fcb3f950f35f2e675df2240550f2a50762f"
+
+[[projects]]
+  name = "github.com/spf13/cobra"
+  packages = ["."]
+  revision = "ef82de70bb3f60c65fb8eebacbb2d122ef517385"
+  version = "v0.0.3"
 
 [[projects]]
   name = "github.com/spf13/pflag"
@@ -202,12 +282,18 @@
   packages = [
     "collate",
     "collate/build",
+    "encoding",
+    "encoding/internal",
+    "encoding/internal/identifier",
+    "encoding/unicode",
     "internal/colltab",
     "internal/gen",
     "internal/tag",
     "internal/triegen",
     "internal/ucd",
+    "internal/utf8internal",
     "language",
+    "runes",
     "secure/bidirule",
     "transform",
     "unicode/bidi",
@@ -268,10 +354,12 @@
     "authorization/v1beta1",
     "autoscaling/v1",
     "autoscaling/v2beta1",
+    "autoscaling/v2beta2",
     "batch/v1",
     "batch/v1beta1",
     "batch/v2alpha1",
     "certificates/v1beta1",
+    "coordination/v1beta1",
     "core/v1",
     "events/v1beta1",
     "extensions/v1beta1",
@@ -287,18 +375,18 @@
     "storage/v1alpha1",
     "storage/v1beta1"
   ]
-  revision = "655e4e87cb5a855657ad325d1a615cf870870c9d"
+  revision = "f456898a08e4bbc5891694118f3819f324de12ff"
 
 [[projects]]
-  branch = "release-1.11"
+  branch = "release-1.12"
   name = "k8s.io/apimachinery"
   packages = [
     "pkg/api/errors",
     "pkg/api/meta",
     "pkg/api/resource",
-    "pkg/apis/meta/internalversion",
     "pkg/apis/meta/v1",
     "pkg/apis/meta/v1/unstructured",
+    "pkg/apis/meta/v1/unstructured/unstructuredscheme",
     "pkg/apis/meta/v1beta1",
     "pkg/conversion",
     "pkg/conversion/queryparams",
@@ -318,22 +406,34 @@
     "pkg/util/errors",
     "pkg/util/framer",
     "pkg/util/httpstream",
+    "pkg/util/httpstream/spdy",
     "pkg/util/intstr",
     "pkg/util/json",
+    "pkg/util/naming",
     "pkg/util/net",
     "pkg/util/proxy",
+    "pkg/util/remotecommand",
     "pkg/util/runtime",
     "pkg/util/sets",
     "pkg/util/validation",
     "pkg/util/validation/field",
-    "pkg/util/wait",
     "pkg/util/yaml",
     "pkg/version",
     "pkg/watch",
     "third_party/forked/golang/netutil",
     "third_party/forked/golang/reflect"
   ]
-  revision = "103fd098999dc9c0c88536f5c9ad2e5da39373ae"
+  revision = "6dd46049f39503a1fc8d65de4bd566829e95faff"
+
+[[projects]]
+  branch = "release-1.12"
+  name = "k8s.io/cli-runtime"
+  packages = [
+    "pkg/genericclioptions",
+    "pkg/genericclioptions/printers",
+    "pkg/genericclioptions/resource"
+  ]
+  revision = "660e75af03b1aa48d21dd7eaa221a8396a93b93e"
 
 [[projects]]
   name = "k8s.io/client-go"
@@ -352,10 +452,12 @@
     "kubernetes/typed/authorization/v1beta1",
     "kubernetes/typed/autoscaling/v1",
     "kubernetes/typed/autoscaling/v2beta1",
+    "kubernetes/typed/autoscaling/v2beta2",
     "kubernetes/typed/batch/v1",
     "kubernetes/typed/batch/v1beta1",
     "kubernetes/typed/batch/v2alpha1",
     "kubernetes/typed/certificates/v1beta1",
+    "kubernetes/typed/coordination/v1beta1",
     "kubernetes/typed/core/v1",
     "kubernetes/typed/events/v1beta1",
     "kubernetes/typed/extensions/v1beta1",
@@ -382,6 +484,7 @@
     "plugin/pkg/client/auth/openstack",
     "rest",
     "rest/watch",
+    "restmapper",
     "third_party/forked/golang/template",
     "tools/auth",
     "tools/clientcmd",
@@ -390,36 +493,35 @@
     "tools/clientcmd/api/v1",
     "tools/metrics",
     "tools/reference",
+    "tools/remotecommand",
     "transport",
+    "transport/spdy",
     "util/cert",
     "util/connrotation",
+    "util/exec",
     "util/flowcontrol",
     "util/homedir",
     "util/integer",
     "util/jsonpath"
   ]
-  revision = "7d04d0e2a0a1a4d4a1cd6baa432a2301492e4e65"
-  version = "v8.0.0"
+  revision = "fc239b8203672f1a8a16779c2cfd1f99844df219"
+  version = "kubernetes-1.12.0"
 
 [[projects]]
-  branch = "master"
-  name = "k8s.io/kubectl"
-  packages = ["pkg/pluginutils"]
-  revision = "69904e713ca703a58d2e693b973ab639403b76f5"
-
-[[projects]]
-  branch = "release-1.11"
+  branch = "release-1.12"
   name = "k8s.io/kubernetes"
   packages = [
-    "pkg/apis/core",
+    "pkg/kubectl/cmd/templates",
     "pkg/kubectl/proxy",
-    "pkg/kubectl/util"
+    "pkg/kubectl/util",
+    "pkg/kubectl/util/term",
+    "pkg/util/interrupt"
   ]
-  revision = "38287de1e0c092e83216c39b4bbca3d5841f3b3e"
+  revision = "c8cc9885de4818f8f522bf4265814c878cdc2d93"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7d5a6553ea6907f3ea5fb43b4b8e33171cde2ac78380c4729a2e182027fda528"
+  inputs-digest = "13817673697d8000b6b299be6934414694a66d92ba82012ef09b31be552820e3"
   solver-name = "gps-cdcl"
   solver-version = 1
