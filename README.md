@@ -62,9 +62,9 @@ $ brew install kubectl-open-svc-plugin
 
 If you are on Linux, you can install with the following steps:
 ```
-$ curl -sL -o open-svc.zip https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/$(curl -sL https://raw.githubusercontent.com/superbrothers/kubectl-open-svc-plugin/master/version.txt)/open-svc-$(uname | tr '[:upper:]' '[:lower:]')-amd64.zip
+$ curl -sL -o open-svc.zip https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/$(curl -sL https://raw.githubusercontent.com/superbrothers/kubectl-open-svc-plugin/master/version.txt)/kubectl-open_svc-$(uname | tr '[:upper:]' '[:lower:]')-amd64.zip
 $ unzip open-svc.zip -d /tmp
-$ mv /tmp/kubectl-open-svc /usr/local/bin/
+$ mv /tmp/kubectl-open_svc /usr/local/bin/
 ```
 
 ## License
