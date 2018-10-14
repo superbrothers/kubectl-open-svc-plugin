@@ -33,7 +33,7 @@ var (
 	`)
 	openServiceExample = templates.Examples(`
 		# Open service/kubernetes-dashboard in namespace/kube-system
-		kubectl plugin open-svc kubernetes-dashboard -n kube-system
+		kubectl open-svc kubernetes-dashboard -n kube-system
 	`)
 )
 

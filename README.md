@@ -6,14 +6,14 @@ This is a kubectl plugin that open the Kubernetes URL(s) for the specified servi
 
 ```
 $ kubectl open-svc -h
-Open the Kubernetes URL(s) for the specified service in your browser through a local proxy server using kubectl proxy.
+Open the Kubernetes URL(s) for the specified service in your browser through a local proxy server.
 
 Usage:
   kubectl open-svc SERVICE [--port=8001] [--address=127.0.0.1] [--keepalive=0] [flags]
 
 Examples:
   # Open service/kubernetes-dashboard in namespace/kube-system
-  kubectl plugin open-svc kubernetes-dashboard -n kube-system
+  kubectl open-svc kubernetes-dashboard -n kube-system
 
 Flags:
       --address string                   The IP address on which to serve on. (default "127.0.0.1")
