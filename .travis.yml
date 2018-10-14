@@ -2,6 +2,8 @@ language: go
 go:
 - "1.11"
 script:
+- make vet
+- make fmt
 - make build
 before_deploy:
 - make dist checksum
