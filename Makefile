@@ -7,6 +7,14 @@ $(shell mkdir -p _dist)
 build:
 		go build -o $(PLUGIN_NAME) cmd/$(PLUGIN_NAME).go
 
+.PHONY: vet
+vet:
+		go tool vet -printfuncs Infof,Warningf,Errorf,Fatalf,Exitf pkg
+
+.PHONY: fmt
+fmt:
+		go fmt ./pkg/... ./cmd/...
+
 .PHONY: cross
 build-cross: $(OUT_DIR)/linux-amd64/$(PLUGIN_NAME) $(OUT_DIR)/darwin-amd64/$(PLUGIN_NAME)
 
