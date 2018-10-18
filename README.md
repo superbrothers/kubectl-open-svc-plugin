@@ -46,26 +46,14 @@ Flags:
 
 ## Install the plugin
 
-<!-- Krew does not support kubectl 1.12 plugin model yet. See https://github.com/GoogleContainerTools/krew/issues/33
+1. Install [krew](https://github.com/GoogleContainerTools/krew) that is a plugin manager for kubectl
+2. Run:
 
-You can install this plugin with [krew](https://github.com/GoogleContainerTools/krew) that is package manager for kubectl plugins.
-```
-$ kubectl plugin install open-svc
-```
--->
+        kubectl krew install open-svc
 
-If you are on macOS, you can install with homebrew:
-```
-$ brew tap superbrothers/kubectl-open-svc-plugin
-$ brew install kubectl-open-svc-plugin
-```
+3. Try it out
 
-If you are on Linux, you can install with the following steps:
-```
-$ curl -sL -o open-svc.zip https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/$(curl -sL https://raw.githubusercontent.com/superbrothers/kubectl-open-svc-plugin/master/version.txt)/kubectl-open_svc-$(uname | tr '[:upper:]' '[:lower:]')-amd64.zip
-$ unzip open-svc.zip -d /tmp
-$ mv /tmp/kubectl-open_svc /usr/local/bin/
-```
+        kubectl open-svc -h
 
 ## License
 
