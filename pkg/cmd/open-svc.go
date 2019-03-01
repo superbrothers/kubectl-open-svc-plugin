@@ -26,6 +26,12 @@ var (
 	defaultPort      = 8001
 	defaultAddress   = "127.0.0.1"
 	defaultKeepalive = 0 * time.Second
+	defaultScheme    = ""
+
+	schemeTypes = map[string]interface{}{
+		"http":  nil,
+		"https": nil,
+	}
 
 	openServiceLong = templates.LongDesc(`
 		Open the Kubernetes URL(s) for the specified service in your browser
@@ -34,6 +40,10 @@ var (
 	openServiceExample = templates.Examples(`
 		# Open service/kubernetes-dashboard in namespace/kube-system
 		kubectl open-svc kubernetes-dashboard -n kube-system
+
+		# Use "https" scheme with --scheme option for connections between the apiserver
+		# and service/rook-ceph-mgr-dashboard in namespace/rook-ceph
+		kubectl open-svc rook-ceph-mgr-dashboard -n rook-ceph --scheme https
 	`)
 )
 
@@ -46,6 +56,7 @@ type OpenServiceOptions struct {
 	port      int
 	address   string
 	keepalive time.Duration
+	scheme    string
 
 	genericclioptions.IOStreams
 }
@@ -59,6 +70,7 @@ func NewOpenServiceOptions(streams genericclioptions.IOStreams) *OpenServiceOpti
 		port:      defaultPort,
 		address:   defaultAddress,
 		keepalive: defaultKeepalive,
+		scheme:    defaultScheme,
 
 		IOStreams: streams,
 	}
@@ -92,6 +104,7 @@ func NewCmdOpenService(streams genericclioptions.IOStreams) *cobra.Command {
 	cmd.Flags().IntVarP(&o.port, "port", "p", o.port, "The port on which to run the proxy. Set to 0 to pick a random port.")
 	cmd.Flags().StringVar(&o.address, "address", o.address, "The IP address on which to serve on.")
 	cmd.Flags().DurationVar(&o.keepalive, "keepalive", o.keepalive, "keepalive specifies the keep-alive period for an active network connection. Set to 0 to disable keepalive.")
+	cmd.Flags().StringVar(&o.scheme, "scheme", o.scheme, `The scheme for connections between the apiserver and the service. It must be "http" or "https" if specfied.`)
 	o.configFlags.AddFlags(cmd.Flags())
 
 	// add the glog flags
@@ -114,6 +127,10 @@ func (o *OpenServiceOptions) Complete(cmd *cobra.Command, args []string) error {
 func (o *OpenServiceOptions) Validate() error {
 	if len(o.args) != 1 {
 		return fmt.Errorf("exactly one SERVICE is required, got %d", len(o.args))
+	}
+
+	if _, ok := schemeTypes[o.scheme]; !ok {
+		return fmt.Errorf(`scheme must be "http" or "https" if specified`)
 	}
 
 	return nil
@@ -163,6 +180,10 @@ func (o *OpenServiceOptions) Run() error {
 			scheme := ""
 			if port.Name == "https" || port.Port == 443 {
 				scheme = "https"
+			}
+			// override the scheme if scheme option is specified
+			if o.scheme != "" {
+				scheme = o.scheme
 			}
 
 			// format is <scheme>:<service-name>:<service-port-name>
