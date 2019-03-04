@@ -5,8 +5,7 @@ script:
 - make vet
 - make fmt
 - make build
-before_deploy:
-- make dist checksum
+- make dist
 deploy:
   provider: releases
   api_key:
