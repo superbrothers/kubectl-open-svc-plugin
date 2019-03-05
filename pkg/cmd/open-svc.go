@@ -29,6 +29,7 @@ var (
 	defaultScheme    = ""
 
 	schemeTypes = map[string]interface{}{
+		"":      nil,
 		"http":  nil,
 		"https": nil,
 	}
