@@ -23,6 +23,9 @@ fmt:
 
 dist: $(DIST_DIR)/open-svc.yaml
 
+test-dist: dist
+		./hack/test-dist.sh
+
 $(OUT_DIR)/%-amd64/$(PLUGIN_NAME):
 		GOOS=$* GOARCH=amd64 go build -o $@ cmd/$(PLUGIN_NAME).go
 
