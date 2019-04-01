@@ -15,7 +15,7 @@ import (
 	utilnet "k8s.io/apimachinery/pkg/util/net"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/kubernetes/pkg/kubectl/cmd/templates"
+	"k8s.io/kubernetes/pkg/kubectl/util/templates"
 
 	"k8s.io/kubernetes/pkg/kubectl/proxy"
 	// Initialize all known client auth plugins.
@@ -66,7 +66,7 @@ type OpenServiceOptions struct {
 // default values
 func NewOpenServiceOptions(streams genericclioptions.IOStreams) *OpenServiceOptions {
 	return &OpenServiceOptions{
-		configFlags: genericclioptions.NewConfigFlags(),
+		configFlags: genericclioptions.NewConfigFlags(true),
 
 		port:      defaultPort,
 		address:   defaultAddress,
