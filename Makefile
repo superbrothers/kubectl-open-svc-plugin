@@ -15,7 +15,7 @@ build-cross: $(OUTS)
 
 .PHONY: vet
 vet:
-		go tool vet -printfuncs Infof,Warningf,Errorf,Fatalf,Exitf pkg
+		go vet -printfuncs Infof,Warningf,Errorf,Fatalf,Exitf ./pkg/... ./cmd/...
 
 .PHONY: fmt
 fmt:
