@@ -8,13 +8,13 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/golang/glog"
 	"github.com/pkg/browser"
 	"github.com/spf13/cobra"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	utilnet "k8s.io/apimachinery/pkg/util/net"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/klog"
 	"k8s.io/kubernetes/pkg/kubectl/util/templates"
 
 	"k8s.io/kubernetes/pkg/kubectl/proxy"
@@ -108,7 +108,7 @@ func NewCmdOpenService(streams genericclioptions.IOStreams) *cobra.Command {
 	cmd.Flags().StringVar(&o.scheme, "scheme", o.scheme, `The scheme for connections between the apiserver and the service. It must be "http" or "https" if specfied.`)
 	o.configFlags.AddFlags(cmd.Flags())
 
-	// add the glog flags
+	// add the klog flags
 	cmd.PersistentFlags().AddGoFlagSet(flag.CommandLine)
 	// Workaround for this issue:
 	// https://github.com/kubernetes/kubernetes/issues/17162
@@ -222,7 +222,7 @@ func (o *OpenServiceOptions) Run() error {
 
 	fmt.Printf("Starting to serve on %s\n", addr)
 	go func() {
-		glog.Fatal(server.ServeOnListener(l))
+		klog.Fatal(server.ServeOnListener(l))
 	}()
 
 	fmt.Printf("Opening service/%s in the default browser...\n", serviceName)

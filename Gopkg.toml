@@ -45,6 +45,10 @@
   branch = "master"
   name = "github.com/pkg/browser"
 
+[[constraint]]
+  name = "k8s.io/klog"
+  version = "v0.2.0"
+
 [[override]]
   name = "k8s.io/apimachinery"
   branch = "release-1.14"
