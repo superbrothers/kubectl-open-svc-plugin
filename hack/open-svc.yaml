@@ -4,8 +4,8 @@ metadata:
   name: open-svc
 spec:
   platforms:
-  - uri: "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/${VERSION}/kubectl-open_svc-darwin-amd64.zip"
-    sha256: "$DARWIN_SHA256"
+  - uri: "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/VERSION/kubectl-open_svc-darwin-amd64.zip"
+    sha256: "DARWIN_SHA256"
     bin: kubectl-open_svc
     files:
     - from: "kubectl-open_svc"
@@ -14,8 +14,8 @@ spec:
       matchLabels:
         os: darwin
         arch: amd64
-  - uri: "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/${VERSION}/kubectl-open_svc-linux-amd64.zip"
-    sha256: "${LINUX_SHA256}"
+  - uri: "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/VERSION/kubectl-open_svc-linux-amd64.zip"
+    sha256: "LINUX_SHA256"
     bin: kubectl-open_svc
     files:
     - from: "kubectl-open_svc"
@@ -24,7 +24,7 @@ spec:
       matchLabels:
         os: linux
         arch: amd64
-  version: "${VERSION}"
+  version: "VERSION"
   shortDescription: Open the Kubernetes URL(s) for the specified service in your browser.
   description: |
     Open the Kubernetes URL(s) for the specified service in your browser.
