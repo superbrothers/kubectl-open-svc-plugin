@@ -2,8 +2,8 @@
 
 set -e -o pipefail; [[ -n "$DEBUG" ]] && set -x
 
-export VERSION="$(./hack/git-version.sh)"
-export DARWIN_SHA256="$(cat ./_dist/kubectl-open_svc-darwin-amd64.zip.sha256)"
-export LINUX_SHA256="$(cat ./_dist/kubectl-open_svc-linux-amd64.zip.sha256)"
+VERSION="$(./hack/git-version.sh)"
+DARWIN_SHA256="$(cat ./_dist/kubectl-open_svc-darwin-amd64.zip.sha256)"
+LINUX_SHA256="$(cat ./_dist/kubectl-open_svc-linux-amd64.zip.sha256)"
 
-printf "cat <<EOL\n$(cat ./hack/plugin-template.yaml)\nEOL" | sh
+sed -e "s/VERSION/${VERSION}/g" -e "s/DARWIN_SHA256/${DARWIN_SHA256}/g" -e "s/LINUX_SHA256/${LINUX_SHA256}/g" ./hack/open-svc.yaml
