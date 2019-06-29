@@ -1,6 +1,6 @@
 # kubectl open-svc SERVICE_NAME
 
-This is a kubectl plugin that open the Kubernetes URL(s) for the specified service in your browser. Unlike `kubectl port-forward` command, this plugin makes you to be able to access a service via ClusterIP.
+This is a kubectl plugin that open the Kubernetes URL(s) for the specified service in your browser. Unlike the `kubectl port-forward` command, this plugin makes services accessible via their ClusterIP.
 
 ![Screenshot](./screenshots/kubectl-open-svc-plugin.gif)
 

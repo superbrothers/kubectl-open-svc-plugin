@@ -28,6 +28,6 @@ spec:
   shortDescription: Open the Kubernetes URL(s) for the specified service in your browser.
   description: |
     Open the Kubernetes URL(s) for the specified service in your browser.
-    Unlike `kubectl port-forward` command, this plugin makes you to be able to
-    access a service via ClusterIP.
+    Unlike the `kubectl port-forward` command, this plugin makes services
+    accessible via their ClusterIP.
   homepage: https://github.com/superbrothers/kubectl-open-svc-plugin
