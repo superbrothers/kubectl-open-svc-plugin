@@ -45,6 +45,7 @@ Flags:
       --stderrthreshold severity         logs at or above this threshold go to stderr (default 2)
       --token string                     Bearer token for authentication to the API server
       --user string                      The name of the kubeconfig user to use
+  -u, --url                              Print the URL instead of opening it.
   -v, --v Level                          log level for V logs
       --vmodule moduleSpec               comma-separated list of pattern=N settings for file-filtered logging
 ```
