@@ -1,6 +1,7 @@
 language: go
 go:
 - "1.12"
+go_import_path: github.com/superbrothers/kubectl-open-svc-plugin
 script:
 - make vet
 - make fmt
