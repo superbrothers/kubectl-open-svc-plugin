@@ -27,6 +27,7 @@ var (
 	defaultAddress   = "127.0.0.1"
 	defaultKeepalive = 0 * time.Second
 	defaultScheme    = ""
+	defaultURL       = false
 
 	schemeTypes = map[string]interface{}{
 		"":      nil,
@@ -58,6 +59,7 @@ type OpenServiceOptions struct {
 	address   string
 	keepalive time.Duration
 	scheme    string
+	url       bool
 
 	genericclioptions.IOStreams
 }
@@ -72,6 +74,7 @@ func NewOpenServiceOptions(streams genericclioptions.IOStreams) *OpenServiceOpti
 		address:   defaultAddress,
 		keepalive: defaultKeepalive,
 		scheme:    defaultScheme,
+		url:       defaultURL,
 
 		IOStreams: streams,
 	}
@@ -82,7 +85,7 @@ func NewCmdOpenService(streams genericclioptions.IOStreams) *cobra.Command {
 	o := NewOpenServiceOptions(streams)
 
 	cmd := &cobra.Command{
-		Use:     fmt.Sprintf("kubectl open-svc SERVICE [--port=%d] [--address=%s] [--keepalive=%d]", defaultPort, defaultAddress, defaultKeepalive),
+		Use:     fmt.Sprintf("kubectl open-svc SERVICE [--port=%d] [--address=%s] [--keepalive=%d] [--url=%t]", defaultPort, defaultAddress, defaultKeepalive, defaultURL),
 		Short:   "Open the Kubernetes URL(s) for the specified service in your browser.",
 		Long:    openServiceLong,
 		Example: openServiceExample,
@@ -106,6 +109,7 @@ func NewCmdOpenService(streams genericclioptions.IOStreams) *cobra.Command {
 	cmd.Flags().StringVar(&o.address, "address", o.address, "The IP address on which to serve on.")
 	cmd.Flags().DurationVar(&o.keepalive, "keepalive", o.keepalive, "keepalive specifies the keep-alive period for an active network connection. Set to 0 to disable keepalive.")
 	cmd.Flags().StringVar(&o.scheme, "scheme", o.scheme, `The scheme for connections between the apiserver and the service. It must be "http" or "https" if specfied.`)
+	cmd.Flags().BoolVarP(&o.url, "url", "u", o.url, "Print the URL instead of opening it.")
 	o.configFlags.AddFlags(cmd.Flags())
 
 	// add the klog flags
@@ -220,22 +224,32 @@ func (o *OpenServiceOptions) Run() error {
 		urls = append(urls, fmt.Sprintf("http://%s%s", addr, path))
 	}
 
-	fmt.Printf("Starting to serve on %s\n", addr)
+	if !o.url {
+		fmt.Printf("Starting to serve on %s\n", addr)
+	}
 	go func() {
 		klog.Fatal(server.ServeOnListener(l))
 	}()
 
-	fmt.Printf("Opening service/%s in the default browser...\n", serviceName)
+	if !o.url {
+		fmt.Printf("Opening service/%s in the default browser...\n", serviceName)
+	}
 	for _, url := range urls {
-		if err := browser.OpenURL(url); err != nil {
-			return fmt.Errorf("Failed to open %s in the default browser\n", url)
+		if o.url {
+			fmt.Println(url)
+		} else {
+			if err := browser.OpenURL(url); err != nil {
+				return fmt.Errorf("Failed to open %s in the default browser\n", url)
+			}
 		}
 	}
 
 	// receive signals and exit
-	quit := make(chan os.Signal)
-	signal.Notify(quit, os.Interrupt)
-	<-quit
+	if !o.url {
+		quit := make(chan os.Signal)
+		signal.Notify(quit, os.Interrupt)
+		<-quit
+	}
 
 	return nil
 }
