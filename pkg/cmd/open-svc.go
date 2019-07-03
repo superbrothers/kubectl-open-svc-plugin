@@ -239,9 +239,13 @@ func (o *OpenServiceOptions) Run() error {
 			}
 		}
 	}
+
 	// receive signals and exit
-	quit := make(chan os.Signal)
-	signal.Notify(quit, os.Interrupt)
-	<-quit
+	if !o.url {
+		quit := make(chan os.Signal)
+		signal.Notify(quit, os.Interrupt)
+		<-quit
+	}
+
 	return nil
 }
