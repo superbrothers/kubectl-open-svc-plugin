@@ -7,6 +7,7 @@ script:
 - make fmt
 - make build
 - make dist
+before_deploy:
 - ./hack/install-krew.sh && make test-dist
 deploy:
   provider: releases
