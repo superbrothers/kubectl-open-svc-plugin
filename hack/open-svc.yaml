@@ -8,8 +8,10 @@ spec:
     sha256: "DARWIN_SHA256"
     bin: kubectl-open_svc
     files:
-    - from: "kubectl-open_svc"
-      to: "."
+    - from: kubectl-open_svc
+      to: .
+    - from: LICENSE
+      to: .
     selector:
       matchLabels:
         os: darwin
@@ -18,8 +20,10 @@ spec:
     sha256: "LINUX_SHA256"
     bin: kubectl-open_svc
     files:
-    - from: "kubectl-open_svc"
-      to: "."
+    - from: kubectl-open_svc
+      to: .
+    - from: LICENSE
+      to: .
     selector:
       matchLabels:
         os: linux
