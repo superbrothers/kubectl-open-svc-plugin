@@ -4,8 +4,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"os"
-	"os/signal"
 	"strconv"
 	"time"
 
@@ -98,7 +96,7 @@ func NewCmdOpenService(streams genericclioptions.IOStreams) *cobra.Command {
 				return err
 			}
 			c.SilenceUsage = true
-			if err := o.Run(); err != nil {
+			if err := o.Run(c.Context()); err != nil {
 				return err
 			}
 
@@ -143,7 +141,7 @@ func (o *OpenServiceOptions) Validate() error {
 }
 
 // Run opens the service in the browser
-func (o *OpenServiceOptions) Run() error {
+func (o *OpenServiceOptions) Run(ctx context.Context) error {
 	serviceName := o.args[0]
 
 	restConfig, err := o.configFlags.ToRESTConfig()
@@ -159,7 +157,7 @@ func (o *OpenServiceOptions) Run() error {
 		return err
 	}
 
-	service, err := client.CoreV1().Services(namespace).Get(context.TODO(), serviceName, metav1.GetOptions{})
+	service, err := client.CoreV1().Services(namespace).Get(ctx, serviceName, metav1.GetOptions{})
 	if err != nil {
 		return fmt.Errorf("Failed to get service/%s in namespace/%s: %v\n", serviceName, namespace, err)
 	}
@@ -247,9 +245,7 @@ func (o *OpenServiceOptions) Run() error {
 
 	// receive signals and exit
 	if !o.url {
-		quit := make(chan os.Signal)
-		signal.Notify(quit, os.Interrupt)
-		<-quit
+		<-ctx.Done()
 	}
 
 	return nil
