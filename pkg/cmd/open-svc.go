@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
@@ -158,7 +159,7 @@ func (o *OpenServiceOptions) Run() error {
 		return err
 	}
 
-	service, err := client.CoreV1().Services(namespace).Get(serviceName, metav1.GetOptions{})
+	service, err := client.CoreV1().Services(namespace).Get(context.TODO(), serviceName, metav1.GetOptions{})
 	if err != nil {
 		return fmt.Errorf("Failed to get service/%s in namespace/%s: %v\n", serviceName, namespace, err)
 	}
