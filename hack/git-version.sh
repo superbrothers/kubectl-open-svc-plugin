@@ -10,7 +10,7 @@ TAG=$(git describe --exact-match --abbrev=0 --tags ${COMMIT} 2> /dev/null || tru
 
 # use the matching tag as the version, if available
 if [ -z "$TAG" ]; then
-    VERSION=$COMMIT
+    VERSION="v0.0.0-$COMMIT"
 else
     VERSION=$TAG
 fi
