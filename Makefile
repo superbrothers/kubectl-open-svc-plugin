@@ -22,6 +22,7 @@ vet:
 fmt:
 		$(GO) fmt ./pkg/... ./cmd/...
 
+.PHONY: dist
 dist: $(DIST_DIR)/open-svc.yaml
 
 test-dist: dist

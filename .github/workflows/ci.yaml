@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+    paths-ignore: ['**.md']
+  pull_request:
+    types: [opened, synchronize]
+    paths-ignore: ['**.md']
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-go@v2
+      with:
+        go-version: "~1.13.10"
+    - run: make vet
+    - run: make fmt
+    - run: make build
+    - run: make dist
+    - run: ./hack/install-krew.sh
+    - run: make test-dist
+    - uses: actions/upload-artifact@v2-preview
+      with:
+        name: dist-files
+        path: _dist/*
+  create-release:
+    needs: [run]
+    if: startsWith(github.ref, 'refs/tags')
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v2-preview
+    - name: Create a release
+      run: |
+        set -x
+        assets=()
+        for asset in ./dist-files/*; do
+          assets+=("-a" "$asset")
+        done
+        tag_name="${GITHUB_REF##*/}"
+        hub release create "${assets[@]}" -m "$tag_name" "$tag_name"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  create-pull-request:
+    needs: [create-release]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        repository: kubernetes-sigs/krew-index
+    - run: git fetch --unshallow
+    - uses: actions/download-artifact@v2-preview
+    - run: |
+        mv -f dist-files/open-svc.yaml plugins/
+        rm -rf dist-files
+    - run: git diff
+    - name: Get the tag
+      id: get_tag
+      run: echo ::set-output name=tag_name::${GITHUB_REF/refs\/tags\//}
+    - uses: peter-evans/create-pull-request@v2
+      with:
+        token: ${{ secrets.GH_PAT }}
+        commit-message: Bump the version of open-svc to ${{ steps.get_tag.outputs.tag_name }}
+        title: Bump the version of open-svc to ${{ steps.get_tag.outputs.tag_name }}
+        body: This PR bumps up the version of open-svc to ${{ steps.get_tag.outputs.tag_name }}.
+        branch: open-svc-${{ steps.get_tag.outputs.tag_name }}
