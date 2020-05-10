@@ -17,6 +17,8 @@ jobs:
     - uses: actions/setup-go@v2
       with:
         go-version: "~1.13.10"
+    - name: Ensure go.mod is already tidied
+      run: go mod tidy && git diff -s --exit-code go.sum
     - run: make vet
     - run: make fmt
     - run: make build
