@@ -30,7 +30,7 @@ spec:
         arch: amd64
   - uri: "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/VERSION/kubectl-open_svc-windows-amd64.zip"
     sha256: "WINDOWS_SHA256"
-    bin: kubectl-open_svc
+    bin: kubectl-open_svc.exe
     files:
     - from: kubectl-open_svc.exe
       to: .
