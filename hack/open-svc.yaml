@@ -28,6 +28,18 @@ spec:
       matchLabels:
         os: linux
         arch: amd64
+  - uri: "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/VERSION/kubectl-open_svc-windows-amd64.zip"
+    sha256: "WINDOWS_SHA256"
+    bin: kubectl-open_svc
+    files:
+    - from: kubectl-open_svc.exe
+      to: .
+    - from: LICENSE
+      to: .
+    selector:
+      matchLabels:
+        os: windows
+        arch: amd64
   version: "VERSION"
   shortDescription: Open the Kubernetes URL(s) for the specified service in your browser.
   description: |
