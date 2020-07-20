@@ -49,6 +49,14 @@ $(DIST_DIR)/$(PLUGIN_NAME)-%-amd64.zip: $(OUT_DIR)/%-amd64/$(PLUGIN_NAME)
 			zip -r ../../$@ * \
 		)
 
+$(DIST_DIR)/$(PLUGIN_NAME)-windows-amd64.zip: $(OUT_DIR)/windows-amd64/$(PLUGIN_NAME).exe
+		( \
+			cd $(OUT_DIR)/windows-amd64/ && \
+			cp ../../LICENSE . && \
+			cp ../../README.md . && \
+			zip -r ../../$@ * \
+		)
+
 $(DIST_DIR)/open-svc.yaml: $(DISTS) $(CHECKSUMS)
 		./hack/generate-plugin-yaml.sh >"$@"
 
