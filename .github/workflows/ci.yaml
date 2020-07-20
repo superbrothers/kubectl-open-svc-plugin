@@ -56,7 +56,9 @@ jobs:
     - uses: actions/checkout@v2
       with:
         repository: kubernetes-sigs/krew-index
-    - run: git fetch --unshallow
+    - run: |
+        git fetch --unshallow
+        git remote set-url origin https://${{ secrets.GH_PAT }}:x-oauth-basic@github.com/superbrothers/krew-index.git
     - run: echo ::set-env name=GIT_TAG::${GITHUB_REF##*/}
     - name: Download the released krew plugin manifest file
       run: |
@@ -71,3 +73,4 @@ jobs:
         title: Bump the version of open-svc to ${{ env.GIT_TAG }}
         body: This PR bumps up the version of open-svc to ${{ env.GIT_TAG }}.
         branch: open-svc-${{ env.GIT_TAG }}
+        equest-to-parent: true
