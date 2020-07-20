@@ -65,6 +65,8 @@ jobs:
     - uses: peter-evans/create-pull-request@v2
       with:
         token: ${{ secrets.GH_PAT }}
+        committer: Kazuki Suda <230185+superbrothers@users.noreply.github.com>
+        author: Kazuki Suda <230185+superbrothers@users.noreply.github.com>
         commit-message: Bump the version of open-svc to ${{ env.GIT_TAG }}
         title: Bump the version of open-svc to ${{ env.GIT_TAG }}
         body: This PR bumps up the version of open-svc to ${{ env.GIT_TAG }}.
