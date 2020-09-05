@@ -203,13 +203,7 @@ func (o *OpenServiceOptions) Run() error {
 		return fmt.Errorf("Looks like service/%s is a headless service\n", serviceName)
 	}
 
-	filter := &proxy.FilterServer{
-		AcceptPaths:   proxy.MakeRegexpArrayOrDie(proxy.DefaultPathAcceptRE),
-		RejectPaths:   proxy.MakeRegexpArrayOrDie(proxy.DefaultPathRejectRE),
-		AcceptHosts:   proxy.MakeRegexpArrayOrDie(proxy.DefaultHostAcceptRE),
-		RejectMethods: proxy.MakeRegexpArrayOrDie(proxy.DefaultMethodRejectRE),
-	}
-	server, err := proxy.NewServer("", "/", "", filter, restConfig, o.keepalive)
+	server, err := proxy.NewServer("", "/", "", nil, restConfig, o.keepalive)
 	if err != nil {
 		return err
 	}
@@ -226,18 +220,18 @@ func (o *OpenServiceOptions) Run() error {
 	}
 
 	if !o.url {
-		fmt.Printf("Starting to serve on %s\n", addr)
+		fmt.Fprintf(o.Out, "Starting to serve on %s\n", addr)
 	}
 	go func() {
 		klog.Fatal(server.ServeOnListener(l))
 	}()
 
 	if !o.url {
-		fmt.Printf("Opening service/%s in the default browser...\n", serviceName)
+		fmt.Fprintf(o.Out, "Opening service/%s in the default browser...\n", serviceName)
 	}
 	for _, url := range urls {
 		if o.url {
-			fmt.Println(url)
+			fmt.Fprintln(o.Out, url)
 		} else {
 			if err := browser.OpenURL(url); err != nil {
 				return fmt.Errorf("Failed to open %s in the default browser\n", url)
