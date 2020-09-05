@@ -203,13 +203,7 @@ func (o *OpenServiceOptions) Run() error {
 		return fmt.Errorf("Looks like service/%s is a headless service\n", serviceName)
 	}
 
-	filter := &proxy.FilterServer{
-		AcceptPaths:   proxy.MakeRegexpArrayOrDie(proxy.DefaultPathAcceptRE),
-		RejectPaths:   proxy.MakeRegexpArrayOrDie(proxy.DefaultPathRejectRE),
-		AcceptHosts:   proxy.MakeRegexpArrayOrDie(proxy.DefaultHostAcceptRE),
-		RejectMethods: proxy.MakeRegexpArrayOrDie(proxy.DefaultMethodRejectRE),
-	}
-	server, err := proxy.NewServer("", "/", "", filter, restConfig, o.keepalive)
+	server, err := proxy.NewServer("", "/", "", nil, restConfig, o.keepalive)
 	if err != nil {
 		return err
 	}
