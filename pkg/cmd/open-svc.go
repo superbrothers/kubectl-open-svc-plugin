@@ -220,18 +220,18 @@ func (o *OpenServiceOptions) Run() error {
 	}
 
 	if !o.url {
-		fmt.Printf("Starting to serve on %s\n", addr)
+		fmt.Fprintf(o.Out, "Starting to serve on %s\n", addr)
 	}
 	go func() {
 		klog.Fatal(server.ServeOnListener(l))
 	}()
 
 	if !o.url {
-		fmt.Printf("Opening service/%s in the default browser...\n", serviceName)
+		fmt.Fprintf(o.Out, "Opening service/%s in the default browser...\n", serviceName)
 	}
 	for _, url := range urls {
 		if o.url {
-			fmt.Println(url)
+			fmt.Fprintln(o.Out, url)
 		} else {
 			if err := browser.OpenURL(url); err != nil {
 				return fmt.Errorf("Failed to open %s in the default browser\n", url)
