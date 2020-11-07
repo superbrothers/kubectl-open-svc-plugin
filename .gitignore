@@ -1,3 +1,2 @@
-/kubectl-open_svc
-/_out
-/_dist
+/dist
+/hack/tools/bin
