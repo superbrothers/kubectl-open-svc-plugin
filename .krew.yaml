@@ -4,43 +4,34 @@ metadata:
   name: open-svc
 spec:
   platforms:
-  - uri: "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/VERSION/kubectl-open_svc-darwin-amd64.zip"
-    sha256: "DARWIN_SHA256"
+  - {{addURIAndSha "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/{{ .TagName }}/kubectl-open_svc-darwin-amd64.zip" .TagName }}
     bin: kubectl-open_svc
     files:
-    - from: kubectl-open_svc
-      to: .
-    - from: LICENSE
+    - from: "*"
       to: .
     selector:
       matchLabels:
         os: darwin
         arch: amd64
-  - uri: "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/VERSION/kubectl-open_svc-linux-amd64.zip"
-    sha256: "LINUX_SHA256"
+  - {{addURIAndSha "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/{{ .TagName }}/kubectl-open_svc-linux-amd64.zip" .TagName }}
     bin: kubectl-open_svc
     files:
-    - from: kubectl-open_svc
-      to: .
-    - from: LICENSE
+    - from: "*"
       to: .
     selector:
       matchLabels:
         os: linux
         arch: amd64
-  - uri: "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/VERSION/kubectl-open_svc-windows-amd64.zip"
-    sha256: "WINDOWS_SHA256"
+  - {{addURIAndSha "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/{{ .TagName }}/kubectl-open_svc-windows-amd64.zip" .TagName }}
     bin: kubectl-open_svc.exe
     files:
-    - from: kubectl-open_svc.exe
-      to: .
-    - from: LICENSE
+    - from: "*"
       to: .
     selector:
       matchLabels:
         os: windows
         arch: amd64
-  version: "VERSION"
+  version: "{{ .TagName }}"
   shortDescription: Open the Kubernetes URL(s) for the specified service in your browser.
   description: |
     Open the Kubernetes URL(s) for the specified service in your browser.
