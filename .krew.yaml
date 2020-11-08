@@ -7,7 +7,9 @@ spec:
   - {{addURIAndSha "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/{{ .TagName }}/kubectl-open_svc-darwin-amd64.zip" .TagName }}
     bin: kubectl-open_svc
     files:
-    - from: "*"
+    - from: kubectl-open_svc
+      to: .
+    - from: LICENSE
       to: .
     selector:
       matchLabels:
@@ -16,7 +18,9 @@ spec:
   - {{addURIAndSha "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/{{ .TagName }}/kubectl-open_svc-linux-amd64.zip" .TagName }}
     bin: kubectl-open_svc
     files:
-    - from: "*"
+    - from: kubectl-open_svc
+      to: .
+    - from: LICENSE
       to: .
     selector:
       matchLabels:
@@ -25,7 +29,9 @@ spec:
   - {{addURIAndSha "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/{{ .TagName }}/kubectl-open_svc-windows-amd64.zip" .TagName }}
     bin: kubectl-open_svc.exe
     files:
-    - from: "*"
+    - from: kubectl-open_svc.exe
+      to: .
+    - from: LICENSE
       to: .
     selector:
       matchLabels:
