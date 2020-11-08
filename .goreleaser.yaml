@@ -26,6 +26,3 @@ checksum:
   name_template: 'checksums.txt'
 changelog:
   sort: asc
-publishers:
-- name: krew
-  cmd: "./hack/generate-plugin-manifest.sh {{ .Version }}"
