@@ -14,7 +14,7 @@ import (
 func init() {
 	// Initialize glog flags
 	klog.InitFlags(flag.CommandLine)
-	flag.CommandLine.Set("logtostderr", "true")
+	_ = flag.CommandLine.Set("logtostderr", "true")
 }
 
 func main() {
