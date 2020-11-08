@@ -117,7 +117,7 @@ func NewCmdOpenService(streams genericclioptions.IOStreams) *cobra.Command {
 	cmd.PersistentFlags().AddGoFlagSet(flag.CommandLine)
 	// Workaround for this issue:
 	// https://github.com/kubernetes/kubernetes/issues/17162
-	flag.CommandLine.Parse([]string{})
+	_ = flag.CommandLine.Parse([]string{})
 
 	return cmd
 }
@@ -176,27 +176,23 @@ func (o *OpenServiceOptions) Run() error {
 		for _, port := range service.Spec.Ports {
 			urls = append(urls, "http://"+ip+":"+strconv.Itoa(int(port.Port)))
 		}
-	} else {
-		name := service.ObjectMeta.Name
+	} else if len(service.Spec.Ports) > 0 {
+		port := service.Spec.Ports[0]
 
-		if len(service.Spec.Ports) > 0 {
-			port := service.Spec.Ports[0]
-
-			// guess if the scheme is https
-			scheme := ""
-			if port.Name == "https" || port.Port == 443 {
-				scheme = "https"
-			}
-			// override the scheme if scheme option is specified
-			if o.scheme != "" {
-				scheme = o.scheme
-			}
-
-			// format is <scheme>:<service-name>:<service-port-name>
-			name = utilnet.JoinSchemeNamePort(scheme, service.ObjectMeta.Name, port.Name)
-
-			paths = append(paths, "/api/v1/namespaces/"+namespace+"/services/"+name+"/proxy")
+		// guess if the scheme is https
+		scheme := ""
+		if port.Name == "https" || port.Port == 443 {
+			scheme = "https"
 		}
+		// override the scheme if scheme option is specified
+		if o.scheme != "" {
+			scheme = o.scheme
+		}
+
+		// format is <scheme>:<service-name>:<service-port-name>
+		name := utilnet.JoinSchemeNamePort(scheme, service.Name, port.Name)
+
+		paths = append(paths, "/api/v1/namespaces/"+namespace+"/services/"+name+"/proxy")
 	}
 
 	if len(urls) == 0 && len(paths) == 0 {
@@ -244,7 +240,7 @@ func (o *OpenServiceOptions) Run() error {
 	}
 
 	// receive signals and exit
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 
