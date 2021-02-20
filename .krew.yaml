@@ -15,6 +15,17 @@ spec:
       matchLabels:
         os: darwin
         arch: amd64
+  - {{addURIAndSha "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/{{ .TagName }}/kubectl-open_svc-darwin-arm64.zip" .TagName }}
+    bin: kubectl-open_svc
+    files:
+    - from: kubectl-open_svc
+      to: .
+    - from: LICENSE
+      to: .
+    selector:
+      matchLabels:
+        os: darwin
+        arch: arm64
   - {{addURIAndSha "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/{{ .TagName }}/kubectl-open_svc-linux-amd64.zip" .TagName }}
     bin: kubectl-open_svc
     files:
@@ -26,6 +37,28 @@ spec:
       matchLabels:
         os: linux
         arch: amd64
+  - {{addURIAndSha "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/{{ .TagName }}/kubectl-open_svc-linux-arm64.zip" .TagName }}
+    bin: kubectl-open_svc
+    files:
+    - from: kubectl-open_svc
+      to: .
+    - from: LICENSE
+      to: .
+    selector:
+      matchLabels:
+        os: linux
+        arch: arm64
+  - {{addURIAndSha "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/{{ .TagName }}/kubectl-open_svc-linux-arm.zip" .TagName }}
+    bin: kubectl-open_svc
+    files:
+    - from: kubectl-open_svc
+      to: .
+    - from: LICENSE
+      to: .
+    selector:
+      matchLabels:
+        os: linux
+        arch: arm
   - {{addURIAndSha "https://github.com/superbrothers/kubectl-open-svc-plugin/releases/download/{{ .TagName }}/kubectl-open_svc-windows-amd64.zip" .TagName }}
     bin: kubectl-open_svc.exe
     files:
