@@ -1,5 +1,6 @@
 GO ?= GO111MODULE=on GOPROXY=https://gocenter.io go
 DIST_DIR := dist
+GIT_VERSION ?= $(shell ./hack/git-version.sh)
 
 .PHONY: build
 build:
@@ -11,12 +12,17 @@ GORELEASER_BIN := bin/goreleaser
 GORELEASER := $(TOOLS_DIR)/$(GORELEASER_BIN)
 GOLANGCI_LINT_BIN := bin/golangci-lint
 GOLANGCI_LINT := $(TOOLS_DIR)/$(GOLANGCI_LINT_BIN)
+GOMPLATE_BIN := bin/gomplate
+GOMPLATE := $(TOOLS_DIR)/$(GOMPLATE_BIN)
 
 $(GORELEASER): $(TOOLS_DIR)/go.mod
 	cd $(TOOLS_DIR) && $(GO) build -o $(GORELEASER_BIN) github.com/goreleaser/goreleaser
 
 $(GOLANGCI_LINT): $(TOOLS_DIR)/go.mod
 	cd $(TOOLS_DIR) && $(GO) build -o $(GOLANGCI_LINT_BIN) github.com/golangci/golangci-lint/cmd/golangci-lint
+
+$(GOMPLATE): $(TOOLS_DIR)/go.mod
+	cd $(TOOLS_DIR) && $(GO) build -o $(GOMPLATE_BIN) github.com/hairyhenderson/gomplate/v3/cmd/gomplate
 
 .PHONY: build-cross
 build-cross: $(GORELEASER)
@@ -35,12 +41,9 @@ lint: vet fmt $(GOLANGCI_LINT)
 	$(GOLANGCI_LINT) run
 
 .PHONY: dist
-dist: $(GORELEASER)
+dist: $(GORELEASER) $(GOMPLATE)
 	$(GORELEASER) release --rm-dist --skip-publish --snapshot
-
-.PHONY: release
-release: $(GORELEASER)
-	$(GORELEASER) release --rm-dist
+	GIT_VERSION=$(GIT_VERSION) $(GOMPLATE) -f ./hack/open-svc.yaml.tmpl > $(DIST_DIR)/open-svc.yaml
 
 .PHONY: clean
 clean:

@@ -18,9 +18,19 @@ jobs:
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-
-    - name: Release
-      run: make release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Update new version in krew-index
-      uses: rajatjindal/krew-release-bot@v0.0.32
+    - uses: softprops/action-gh-release@v1
+      with:
+        files: dist/!(config.yaml)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - uses: superbrothers/actions/krew-plugin-test@master
+      with:
+        manifest: ./dist/open-svc.yaml
+        command: kubectl open-svc --help
+    - uses: superbrothers/actions/krew-plugin-release@master
+      with:
+        token: ${{ secrets.PAT }}
+        plugin_name: open-svc
+        manifest_path: dist/open-svc.yaml
+        git_author_name: Kazuki Suda
+        git_author_email: kazuki.suda@gmail.com
