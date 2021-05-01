@@ -21,8 +21,8 @@ jobs:
     - uses: softprops/action-gh-release@v1
       with:
         files: dist/!(config.yaml)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - uses: superbrothers/actions/krew-plugin-test@master
       with:
         manifest: ./dist/open-svc.yaml
