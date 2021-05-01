@@ -11,6 +11,7 @@ import (
 
 	"github.com/pkg/browser"
 	"github.com/spf13/cobra"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	utilnet "k8s.io/apimachinery/pkg/util/net"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
@@ -177,22 +178,7 @@ func (o *OpenServiceOptions) Run() error {
 			urls = append(urls, "http://"+ip+":"+strconv.Itoa(int(port.Port)))
 		}
 	} else if len(service.Spec.Ports) > 0 {
-		port := service.Spec.Ports[0]
-
-		// guess if the scheme is https
-		scheme := ""
-		if port.Name == "https" || port.Port == 443 {
-			scheme = "https"
-		}
-		// override the scheme if scheme option is specified
-		if o.scheme != "" {
-			scheme = o.scheme
-		}
-
-		// format is <scheme>:<service-name>:<service-port-name>
-		name := utilnet.JoinSchemeNamePort(scheme, service.Name, port.Name)
-
-		paths = append(paths, "/api/v1/namespaces/"+namespace+"/services/"+name+"/proxy")
+		paths = o.getServiceProxyPaths(service)
 	}
 
 	if len(urls) == 0 && len(paths) == 0 {
@@ -245,4 +231,24 @@ func (o *OpenServiceOptions) Run() error {
 	<-quit
 
 	return nil
+}
+
+func (o *OpenServiceOptions) getServiceProxyPaths(svc *v1.Service) []string {
+	paths := make([]string, len(svc.Spec.Ports))
+
+	for i, port := range svc.Spec.Ports {
+		scheme := o.scheme
+		if scheme == "" {
+			// guess if the scheme is https
+			if port.Name == "https" || port.Port == 443 {
+				scheme = "https"
+			}
+		}
+
+		// format is <scheme>:<service-name>:<service-port-name>
+		name := utilnet.JoinSchemeNamePort(scheme, svc.GetName(), port.Name)
+		paths[i] = "/api/v1/namespaces/" + svc.GetNamespace() + "/services/" + name + "/proxy"
+	}
+
+	return paths
 }
