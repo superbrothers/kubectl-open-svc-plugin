@@ -18,6 +18,7 @@ jobs:
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-
+    - run: make dist
     - uses: softprops/action-gh-release@v1
       with:
         files: dist/!(config.yaml)
