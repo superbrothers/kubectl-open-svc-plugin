@@ -40,6 +40,10 @@ fmt:
 lint: vet fmt $(GOLANGCI_LINT)
 	$(GOLANGCI_LINT) run
 
+.PHONY: test
+test:
+	$(GO) test -v ./...
+
 .PHONY: dist
 dist: $(GORELEASER) $(GOMPLATE)
 	$(GORELEASER) release --rm-dist --skip-publish --snapshot
