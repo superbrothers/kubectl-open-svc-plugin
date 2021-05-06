@@ -1,7 +1,6 @@
 project_name: kubectl-open_svc
 env:
 - GO111MODULE=on
-- GOPROXY=https://gocenter.io
 builds:
 - main: ./cmd/kubectl-open_svc.go
   binary: kubectl-open_svc

@@ -1,4 +1,4 @@
-GO ?= GO111MODULE=on GOPROXY=https://gocenter.io go
+GO ?= GO111MODULE=on go
 DIST_DIR := dist
 GIT_VERSION ?= $(shell ./hack/git-version.sh)
 
