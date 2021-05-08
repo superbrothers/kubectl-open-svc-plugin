@@ -4,13 +4,16 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"os"
 	"os/signal"
-	"strconv"
 	"time"
 
 	"github.com/pkg/browser"
 	"github.com/spf13/cobra"
+	"github.com/superbrothers/kubectl-open-svc-plugin/pkg/utils"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	utilnet "k8s.io/apimachinery/pkg/util/net"
@@ -29,7 +32,6 @@ var (
 	defaultAddress   = "127.0.0.1"
 	defaultKeepalive = 0 * time.Second
 	defaultScheme    = ""
-	defaultURL       = false
 
 	schemeTypes = map[string]interface{}{
 		"":      nil,
@@ -61,7 +63,6 @@ type OpenServiceOptions struct {
 	address   string
 	keepalive time.Duration
 	scheme    string
-	url       bool
 
 	genericclioptions.IOStreams
 }
@@ -76,7 +77,6 @@ func NewOpenServiceOptions(streams genericclioptions.IOStreams) *OpenServiceOpti
 		address:   defaultAddress,
 		keepalive: defaultKeepalive,
 		scheme:    defaultScheme,
-		url:       defaultURL,
 
 		IOStreams: streams,
 	}
@@ -87,7 +87,7 @@ func NewCmdOpenService(streams genericclioptions.IOStreams) *cobra.Command {
 	o := NewOpenServiceOptions(streams)
 
 	cmd := &cobra.Command{
-		Use:     fmt.Sprintf("kubectl open-svc SERVICE [--port=%d] [--address=%s] [--keepalive=%d] [--url=%t]", defaultPort, defaultAddress, defaultKeepalive, defaultURL),
+		Use:     fmt.Sprintf("kubectl open-svc SERVICE [--port=%d] [--address=%s] [--keepalive=%d]", defaultPort, defaultAddress, defaultKeepalive),
 		Short:   "Open the Kubernetes URL(s) for the specified service in your browser.",
 		Long:    openServiceLong,
 		Example: openServiceExample,
@@ -111,7 +111,6 @@ func NewCmdOpenService(streams genericclioptions.IOStreams) *cobra.Command {
 	cmd.Flags().StringVar(&o.address, "address", o.address, "The IP address on which to serve on.")
 	cmd.Flags().DurationVar(&o.keepalive, "keepalive", o.keepalive, "keepalive specifies the keep-alive period for an active network connection. Set to 0 to disable keepalive.")
 	cmd.Flags().StringVar(&o.scheme, "scheme", o.scheme, `The scheme for connections between the apiserver and the service. It must be "http" or "https" if specfied.`)
-	cmd.Flags().BoolVarP(&o.url, "url", "u", o.url, "Print the URL instead of opening it.")
 	o.configFlags.AddFlags(cmd.Flags())
 
 	// add the klog flags
@@ -165,36 +164,9 @@ func (o *OpenServiceOptions) Run() error {
 		return fmt.Errorf("Failed to get service/%s in namespace/%s: %v\n", serviceName, namespace, err)
 	}
 
-	var urls []string
-	var paths []string
-
-	if len(service.Status.LoadBalancer.Ingress) > 0 {
-		ingress := service.Status.LoadBalancer.Ingress[0]
-		ip := ingress.IP
-		if ip == "" {
-			ip = ingress.Hostname
-		}
-		for _, port := range service.Spec.Ports {
-			urls = append(urls, "http://"+ip+":"+strconv.Itoa(int(port.Port)))
-		}
-	} else if len(service.Spec.Ports) > 0 {
-		paths = o.getServiceProxyPaths(service)
-	}
-
-	if len(urls) == 0 && len(paths) == 0 {
-		return fmt.Errorf("Looks like service/%s is a headless service\n", serviceName)
-	}
-
-	if o.url {
-		for _, path := range paths {
-			urls = append(urls, restConfig.Host+path)
-		}
-
-		for _, url := range urls {
-			fmt.Fprintln(o.Out, url)
-		}
-
-		return nil
+	proxyPath, err := o.getServiceProxyPath(service)
+	if err != nil {
+		return err
 	}
 
 	server, err := proxy.NewServer("", "/", "", nil, restConfig, o.keepalive)
@@ -202,53 +174,79 @@ func (o *OpenServiceOptions) Run() error {
 		return err
 	}
 
-	l, err := server.Listen(o.address, o.port)
+	l, err := server.Listen("127.0.0.1", 0)
 	if err != nil {
 		return err
 	}
 
-	addr := l.Addr().String()
+	klog.V(4).Infof("Starting to serve kubectl proxy on %s\n", l.Addr().String())
 
-	for _, path := range paths {
-		urls = append(urls, "http://"+addr+path)
-	}
-
-	fmt.Fprintf(o.Out, "Starting to serve on %s\n", addr)
 	go func() {
 		klog.Fatal(server.ServeOnListener(l))
 	}()
 
-	fmt.Fprintf(o.Out, "Opening service/%s in the default browser...\n", serviceName)
-	for _, url := range urls {
-		if err := browser.OpenURL(url); err != nil {
-			return fmt.Errorf("Failed to open %s in the default browser\n", url)
-		}
+	target, err := url.Parse("http://" + l.Addr().String() + proxyPath)
+	if err != nil {
+		return err
 	}
 
-	// receive signals and exit
+	reverseProxy := httputil.NewSingleHostReverseProxy(target)
+	reverseProxy.ModifyResponse = utils.StripModifierFunc(target.Path)
+	srv := &http.Server{
+		Addr:    o.getListenAddr(),
+		Handler: reverseProxy,
+	}
+
+	fmt.Fprintf(o.Out, "Starting to serve on %s\n", o.getListenAddr())
+
+	go func() {
+		klog.Fatal(srv.ListenAndServe())
+	}()
+
+	fmt.Fprintf(o.Out, "Opening service/%s in the default browser...\n", serviceName)
+	if err := browser.OpenURL(o.getListenURL()); err != nil {
+		return err
+	}
+
 	quit := make(chan os.Signal, 1)
+	defer close(quit)
+
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 
 	return nil
 }
 
-func (o *OpenServiceOptions) getServiceProxyPaths(svc *v1.Service) []string {
-	paths := make([]string, len(svc.Spec.Ports))
+func (o *OpenServiceOptions) getListenAddr() string {
+	return fmt.Sprintf("%s:%d", o.address, o.port)
+}
 
-	for i, port := range svc.Spec.Ports {
-		scheme := o.scheme
-		if scheme == "" {
-			// guess if the scheme is https
-			if port.Name == "https" || port.Port == 443 {
-				scheme = "https"
-			}
-		}
+func (o *OpenServiceOptions) getListenURL() string {
+	return "http://" + o.getListenAddr()
+}
 
-		// format is <scheme>:<service-name>:<service-port-name>
-		name := utilnet.JoinSchemeNamePort(scheme, svc.GetName(), port.Name)
-		paths[i] = "/api/v1/namespaces/" + svc.GetNamespace() + "/services/" + name + "/proxy"
+func (o *OpenServiceOptions) getServiceProxyPath(svc *v1.Service) (string, error) {
+	l := len(svc.Spec.Ports)
+
+	if l == 0 {
+		return "", fmt.Errorf("Looks like service/%s is a headless service", svc.GetName())
 	}
 
-	return paths
+	port := svc.Spec.Ports[0]
+
+	if l > 1 {
+		fmt.Fprintf(o.ErrOut, "service/%s has %d ports, defaulting port %d", svc.GetName(), l, port.Port)
+	}
+
+	scheme := o.scheme
+	if scheme == "" {
+		// guess if the scheme is https
+		if port.Name == "https" || port.Port == 443 {
+			scheme = "https"
+		}
+	}
+
+	// format is <scheme>:<service-name>:<service-port-name>
+	name := utilnet.JoinSchemeNamePort(scheme, svc.GetName(), port.Name)
+	return fmt.Sprintf("/api/v1/namespaces/%s/services/%s/proxy", svc.GetNamespace(), name), nil
 }

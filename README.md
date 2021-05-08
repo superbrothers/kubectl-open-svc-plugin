@@ -9,7 +9,7 @@ $ kubectl open-svc -h
 Open the Kubernetes URL(s) for the specified service in your browser through a local proxy server.
 
 Usage:
-  kubectl open-svc SERVICE [--port=8001] [--address=127.0.0.1] [--keepalive=0] [--url=false] [flags]
+  kubectl open-svc SERVICE [--port=8001] [--address=127.0.0.1] [--keepalive=0] [flags]
 
 Examples:
   # Open service/kubernetes-dashboard in namespace/kube-system
