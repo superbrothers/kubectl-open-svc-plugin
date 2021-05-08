@@ -19,7 +19,7 @@ import (
 	utilnet "k8s.io/apimachinery/pkg/util/net"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 	"k8s.io/kubectl/pkg/util/templates"
 
 	"k8s.io/kubectl/pkg/proxy"
@@ -115,9 +115,6 @@ func NewCmdOpenService(streams genericclioptions.IOStreams) *cobra.Command {
 
 	// add the klog flags
 	cmd.PersistentFlags().AddGoFlagSet(flag.CommandLine)
-	// Workaround for this issue:
-	// https://github.com/kubernetes/kubernetes/issues/17162
-	_ = flag.CommandLine.Parse([]string{})
 
 	return cmd
 }
