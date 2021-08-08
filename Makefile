@@ -1,4 +1,4 @@
-GO ?= GO111MODULE=on go
+GO ?= go
 DIST_DIR := dist
 GIT_VERSION ?= $(shell ./hack/git-version.sh)
 
