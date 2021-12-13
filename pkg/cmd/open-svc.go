@@ -166,7 +166,7 @@ func (o *OpenServiceOptions) Run() error {
 		return err
 	}
 
-	server, err := proxy.NewServer("", "/", "", nil, restConfig, o.keepalive)
+	server, err := proxy.NewServer("", "/", "", nil, restConfig, o.keepalive, false)
 	if err != nil {
 		return err
 	}
