@@ -12,8 +12,8 @@ GORELEASER_BIN := bin/goreleaser
 GORELEASER := $(TOOLS_DIR)/$(GORELEASER_BIN)
 GOLANGCI_LINT_BIN := bin/golangci-lint
 GOLANGCI_LINT := $(TOOLS_DIR)/$(GOLANGCI_LINT_BIN)
-GOMPLATE_BIN := bin/gomplate
-GOMPLATE := $(TOOLS_DIR)/$(GOMPLATE_BIN)
+VALIDATE_KREW_MAIFEST_BIN := bin/validate-krew-manifest
+VALIDATE_KREW_MAIFEST := $(TOOLS_DIR)/$(VALIDATE_KREW_MAIFEST_BIN)
 
 $(GORELEASER): $(TOOLS_DIR)/go.mod
 	cd $(TOOLS_DIR) && $(GO) build -o $(GORELEASER_BIN) github.com/goreleaser/goreleaser
@@ -21,8 +21,8 @@ $(GORELEASER): $(TOOLS_DIR)/go.mod
 $(GOLANGCI_LINT): $(TOOLS_DIR)/go.mod
 	cd $(TOOLS_DIR) && $(GO) build -o $(GOLANGCI_LINT_BIN) github.com/golangci/golangci-lint/cmd/golangci-lint
 
-$(GOMPLATE): $(TOOLS_DIR)/go.mod
-	cd $(TOOLS_DIR) && $(GO) build -o $(GOMPLATE_BIN) github.com/hairyhenderson/gomplate/v3/cmd/gomplate
+$(VALIDATE_KREW_MAIFEST): $(TOOLS_DIR)/go.mod
+	cd $(TOOLS_DIR) && $(GO) build -o $(VALIDATE_KREW_MAIFEST_BIN) sigs.k8s.io/krew/cmd/validate-krew-manifest
 
 .PHONY: build-cross
 build-cross: $(GORELEASER)
@@ -44,10 +44,13 @@ lint: vet fmt $(GOLANGCI_LINT)
 test:
 	$(GO) test -v ./...
 
+.PHONY: validate-krew-manifest
+validate-krew-manifest: $(VALIDATE_KREW_MAIFEST)
+	$(VALIDATE_KREW_MAIFEST) -manifest dist/open-svc.yaml -skip-install
+
 .PHONY: dist
 dist: $(GORELEASER) $(GOMPLATE)
 	$(GORELEASER) release --rm-dist --skip-publish --snapshot
-	GIT_VERSION=$(GIT_VERSION) $(GOMPLATE) -f ./hack/open-svc.yaml.tmpl > $(DIST_DIR)/open-svc.yaml
 
 .PHONY: clean
 clean:
