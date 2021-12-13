@@ -27,8 +27,4 @@ jobs:
     - run: make vet fmt lint
     - run: make test
     - run: make dist
-    - uses: superbrothers/actions/krew-plugin-test@master
-      with:
-        archive: ./dist/kubectl-open_svc-linux-amd64.zip
-        manifest: ./dist/open-svc.yaml
-        command: kubectl open-svc --help
+    - run: make validate-krew-manifest

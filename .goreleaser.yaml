@@ -23,3 +23,12 @@ checksum:
   name_template: 'checksums.txt'
 changelog:
   sort: asc
+krews:
+- name: open-svc
+  homepage: https://github.com/superbrothers/kubectl-open-svc-plugin
+  description: |
+    Open the Kubernetes URL(s) for the specified service in your browser.
+    Unlike the `kubectl port-forward` command, this plugin makes services
+    accessible via their ClusterIP.
+  short_description: Open the Kubernetes URL(s) for the specified service in your browser.
+  skip_upload: false
