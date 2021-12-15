@@ -1,6 +1,5 @@
 GO ?= go
 DIST_DIR := dist
-GIT_VERSION ?= $(shell ./hack/git-version.sh)
 
 .PHONY: build
 build:
