@@ -49,8 +49,12 @@ validate-krew-manifest: $(VALIDATE_KREW_MAIFEST)
 	$(VALIDATE_KREW_MAIFEST) -manifest dist/open-svc.yaml -skip-install
 
 .PHONY: dist
-dist: $(GORELEASER) $(GOMPLATE)
+dist: $(GORELEASER)
 	$(GORELEASER) release --rm-dist --skip-publish --snapshot
+
+.PHONY: release
+release: $(GORELEASER)
+	$(GORELEASER) release --rm-dist --skip-publish
 
 .PHONY: clean
 clean:
