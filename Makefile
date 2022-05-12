@@ -7,15 +7,18 @@ build:
 
 TOOLS_DIR := hack/tools
 TOOLS_BIN_DIR := $(TOOLS_DIR)/bin
+$(shell mkdir -p $(TOOLS_BIN_DIR))
+
 GORELEASER_BIN := bin/goreleaser
 GORELEASER := $(TOOLS_DIR)/$(GORELEASER_BIN)
+GORELEASER_VERSION ?= v1.8.3
 GOLANGCI_LINT_BIN := bin/golangci-lint
 GOLANGCI_LINT := $(TOOLS_DIR)/$(GOLANGCI_LINT_BIN)
 VALIDATE_KREW_MAIFEST_BIN := bin/validate-krew-manifest
 VALIDATE_KREW_MAIFEST := $(TOOLS_DIR)/$(VALIDATE_KREW_MAIFEST_BIN)
 
-$(GORELEASER): $(TOOLS_DIR)/go.mod
-	cd $(TOOLS_DIR) && $(GO) build -o $(GORELEASER_BIN) github.com/goreleaser/goreleaser
+$(GORELEASER):
+	curl -SL "https://github.com/goreleaser/goreleaser/releases/download/$(GORELEASER_VERSION)/goreleaser_$(shell uname -s)_$(shell uname -m).tar.gz" | tar xz -C $(TOOLS_BIN_DIR) goreleaser
 
 $(GOLANGCI_LINT): $(TOOLS_DIR)/go.mod
 	cd $(TOOLS_DIR) && $(GO) build -o $(GOLANGCI_LINT_BIN) github.com/golangci/golangci-lint/cmd/golangci-lint
