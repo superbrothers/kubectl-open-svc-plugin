@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/golangci/golangci-lint v1.46.1
-	sigs.k8s.io/krew v0.4.2-0.20211204180432-74b9d0085fa5
+	sigs.k8s.io/krew v0.4.3
 )
 
 require (
