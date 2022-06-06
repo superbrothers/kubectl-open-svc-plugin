@@ -2,8 +2,8 @@ GO ?= go
 DIST_DIR := dist
 
 .PHONY: build
-build:
-	$(GO) build -o $(DIST_DIR)/kubectl-open_svc cmd/kubectl-open_svc.go
+build: $(GORELEASER)
+	$(GORELEASER) build --snapshot --rm-dist --single-target --output $(DIST_DIR)/kubectl-open_svc
 
 TOOLS_BIN_DIR := $(CURDIR)/hack/tools/bin
 $(shell mkdir -p $(TOOLS_BIN_DIR))
