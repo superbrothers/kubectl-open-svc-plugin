@@ -3,7 +3,6 @@ package utils
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
@@ -24,7 +23,7 @@ func StripModifierFunc(s string) func(r *http.Response) error {
 		}
 
 		b = bytes.ReplaceAll(b, []byte(s), []byte(""))
-		r.Body = ioutil.NopCloser(bytes.NewReader(b))
+		r.Body = io.NopCloser(bytes.NewReader(b))
 		r.Header.Set("Content-Length", strconv.Itoa(len(b)))
 
 		return nil

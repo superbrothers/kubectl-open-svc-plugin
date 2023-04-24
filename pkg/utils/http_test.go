@@ -3,7 +3,6 @@ package utils
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"testing"
 
@@ -26,7 +25,7 @@ func TestStripModifierFunc(t *testing.T) {
 					"Location":       {"/api/v1/namespaces/default/services/nginx/proxy/login"},
 					"Content-Length": {"86"},
 				},
-				Body: ioutil.NopCloser(bytes.NewReader([]byte(`<script src="/api/v1/namespaces/default/services/nginx/proxy/public/main.js"></script>`))),
+				Body: io.NopCloser(bytes.NewReader([]byte(`<script src="/api/v1/namespaces/default/services/nginx/proxy/public/main.js"></script>`))),
 			},
 			header: http.Header(map[string][]string{
 				"Location":       {"/login"},
