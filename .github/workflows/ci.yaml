@@ -18,7 +18,6 @@ jobs:
         go-version-file: go.mod
     - name: Ensure go.mod is already tidied
       run: go mod tidy && git diff -s --exit-code go.sum
-    - run: make vet fmt lint
-    - run: make test
+    - run: make lint test
     - run: make dist
     - run: make validate-krew-manifest
