@@ -28,17 +28,13 @@ build: $(GORELEASER)
 build-cross: $(GORELEASER)
 	$(GORELEASER) build --snapshot --rm-dist
 
-.PHONY: vet
-vet:
-	$(GO) vet ./...
-
-.PHONY: fmt
-fmt:
-	$(GO) fmt ./...
-
 .PHONY: lint
-lint: vet fmt $(GOLANGCI_LINT)
+lint: $(GOLANGCI_LINT)
 	$(GOLANGCI_LINT) run
+
+.PHONY: lint-fix
+lint-fix: $(GOLANGCI_LINT)
+	$(GOLANGCI_LINT) run --fix
 
 .PHONY: test
 test:
