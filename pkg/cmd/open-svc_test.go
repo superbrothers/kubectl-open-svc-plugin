@@ -210,6 +210,82 @@ func TestOpenServiceOptionsGetServiceProxyPath(t *testing.T) {
 			"",
 			"Looks like service/nginx is a headless service",
 		},
+		{
+			"no ports by portName",
+			&OpenServiceOptions{
+				IOStreams: genericclioptions.NewTestIOStreamsDiscard(),
+				portName:  "noport",
+			},
+			&v1.Service{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "nginx",
+					Namespace: "default",
+				},
+				Spec: v1.ServiceSpec{
+					Ports: []v1.ServicePort{
+						{
+							Port: 8080,
+						},
+					},
+				},
+			},
+			"",
+			"port noport not found for service/nginx",
+		},
+		{
+			"not specified scheme by portName",
+			&OpenServiceOptions{
+				IOStreams: genericclioptions.NewTestIOStreamsDiscard(),
+				portName:  "metrics",
+			},
+			&v1.Service{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "nginx",
+					Namespace: "default",
+				},
+				Spec: v1.ServiceSpec{
+					Ports: []v1.ServicePort{
+						{
+							Name: "https",
+							Port: 443,
+						},
+						{
+							Name: "metrics",
+							Port: 10254,
+						},
+					},
+				},
+			},
+			"/api/v1/namespaces/default/services/nginx:metrics/proxy",
+			"",
+		},
+		{
+			"specified scheme by portName",
+			&OpenServiceOptions{
+				IOStreams: genericclioptions.NewTestIOStreamsDiscard(),
+				portName:  "https",
+			},
+			&v1.Service{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "nginx",
+					Namespace: "default",
+				},
+				Spec: v1.ServiceSpec{
+					Ports: []v1.ServicePort{
+						{
+							Name: "https",
+							Port: 443,
+						},
+						{
+							Name: "metrics",
+							Port: 10254,
+						},
+					},
+				},
+			},
+			"/api/v1/namespaces/default/services/nginx:https:https/proxy",
+			"",
+		},
 	}
 
 	for _, tt := range tests {

@@ -60,6 +60,7 @@ type OpenServiceOptions struct {
 
 	args      []string
 	port      int
+	portName  string
 	address   string
 	keepalive time.Duration
 	scheme    string
@@ -108,6 +109,7 @@ func NewCmdOpenService(streams genericclioptions.IOStreams) *cobra.Command {
 	}
 
 	cmd.Flags().IntVarP(&o.port, "port", "p", o.port, "The port on which to run the proxy. Set to 0 to pick a random port.")
+	cmd.Flags().StringVar(&o.portName, "port-name", o.portName, "The service port name. default is empty and uses the first port")
 	cmd.Flags().StringVar(&o.address, "address", o.address, "The IP address on which to serve on.")
 	cmd.Flags().DurationVar(&o.keepalive, "keepalive", o.keepalive, "keepalive specifies the keep-alive period for an active network connection. Set to 0 to disable keepalive.")
 	cmd.Flags().StringVar(&o.scheme, "scheme", o.scheme, `The scheme for connections between the apiserver and the service. It must be "http" or "https" if specfied.`)
@@ -229,10 +231,25 @@ func (o *OpenServiceOptions) getServiceProxyPath(svc *v1.Service) (string, error
 		return "", fmt.Errorf("Looks like service/%s is a headless service", svc.GetName())
 	}
 
-	port := svc.Spec.Ports[0]
+	var port v1.ServicePort
 
-	if l > 1 {
-		fmt.Fprintf(o.ErrOut, "service/%s has %d ports, defaulting port %d", svc.GetName(), l, port.Port)
+	if len(o.portName) == 0 {
+		port = svc.Spec.Ports[0]
+
+		if l > 1 {
+			fmt.Fprintf(o.ErrOut, "service/%s has %d ports, defaulting port %d\n", svc.GetName(), l, port.Port)
+		}
+	} else {
+		for _, p := range svc.Spec.Ports {
+			if p.Name == o.portName {
+				port = p
+				break
+			}
+		}
+
+		if len(port.Name) == 0 {
+			return "", fmt.Errorf("port %s not found for service/%s", o.portName, svc.GetName())
+		}
 	}
 
 	scheme := o.scheme
