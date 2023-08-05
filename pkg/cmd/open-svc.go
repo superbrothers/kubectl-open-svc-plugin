@@ -47,6 +47,9 @@ var (
 		# Open service/kubernetes-dashboard in namespace/kube-system
 		kubectl open-svc kubernetes-dashboard -n kube-system
 
+		# Open http-monitoring port name of service/istiod in namespace/istio-system
+		kubectl open-svc istiod -n istio-system --svc-port http-monitoring
+
 		# Use "https" scheme with --scheme option for connections between the apiserver
 		# and service/rook-ceph-mgr-dashboard in namespace/rook-ceph
 		kubectl open-svc rook-ceph-mgr-dashboard -n rook-ceph --scheme https
@@ -60,6 +63,7 @@ type OpenServiceOptions struct {
 
 	args      []string
 	port      int
+	svcPort   string
 	address   string
 	keepalive time.Duration
 	scheme    string
@@ -108,6 +112,7 @@ func NewCmdOpenService(streams genericclioptions.IOStreams) *cobra.Command {
 	}
 
 	cmd.Flags().IntVarP(&o.port, "port", "p", o.port, "The port on which to run the proxy. Set to 0 to pick a random port.")
+	cmd.Flags().StringVar(&o.svcPort, "svc-port", o.svcPort, "The service port name. default is empty and uses the first port")
 	cmd.Flags().StringVar(&o.address, "address", o.address, "The IP address on which to serve on.")
 	cmd.Flags().DurationVar(&o.keepalive, "keepalive", o.keepalive, "keepalive specifies the keep-alive period for an active network connection. Set to 0 to disable keepalive.")
 	cmd.Flags().StringVar(&o.scheme, "scheme", o.scheme, `The scheme for connections between the apiserver and the service. It must be "http" or "https" if specfied.`)
@@ -229,10 +234,25 @@ func (o *OpenServiceOptions) getServiceProxyPath(svc *v1.Service) (string, error
 		return "", fmt.Errorf("Looks like service/%s is a headless service", svc.GetName())
 	}
 
-	port := svc.Spec.Ports[0]
+	var port v1.ServicePort
 
-	if l > 1 {
-		fmt.Fprintf(o.ErrOut, "service/%s has %d ports, defaulting port %d", svc.GetName(), l, port.Port)
+	if o.svcPort == "" {
+		port = svc.Spec.Ports[0]
+
+		if l > 1 {
+			fmt.Fprintf(o.ErrOut, "service/%s has %d ports, defaulting port %d\n", svc.GetName(), l, port.Port)
+		}
+	} else {
+		for _, p := range svc.Spec.Ports {
+			if p.Name == o.svcPort {
+				port = p
+				break
+			}
+		}
+
+		if port.Name == "" {
+			return "", fmt.Errorf("port %q not found in service/%s", o.svcPort, svc.GetName())
+		}
 	}
 
 	scheme := o.scheme
