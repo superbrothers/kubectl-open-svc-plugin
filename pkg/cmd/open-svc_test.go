@@ -211,10 +211,10 @@ func TestOpenServiceOptionsGetServiceProxyPath(t *testing.T) {
 			"Looks like service/nginx is a headless service",
 		},
 		{
-			"no ports by portName",
+			"no ports by service port name",
 			&OpenServiceOptions{
 				IOStreams: genericclioptions.NewTestIOStreamsDiscard(),
-				portName:  "noport",
+				svcPort:   "noport",
 			},
 			&v1.Service{
 				ObjectMeta: metav1.ObjectMeta{
@@ -230,13 +230,13 @@ func TestOpenServiceOptionsGetServiceProxyPath(t *testing.T) {
 				},
 			},
 			"",
-			"port noport not found for service/nginx",
+			"port noport not found in service/nginx",
 		},
 		{
-			"not specified scheme by portName",
+			"not specified scheme by service port name",
 			&OpenServiceOptions{
 				IOStreams: genericclioptions.NewTestIOStreamsDiscard(),
-				portName:  "metrics",
+				svcPort:   "metrics",
 			},
 			&v1.Service{
 				ObjectMeta: metav1.ObjectMeta{
@@ -260,10 +260,10 @@ func TestOpenServiceOptionsGetServiceProxyPath(t *testing.T) {
 			"",
 		},
 		{
-			"specified scheme by portName",
+			"specified scheme by service port name",
 			&OpenServiceOptions{
 				IOStreams: genericclioptions.NewTestIOStreamsDiscard(),
-				portName:  "https",
+				svcPort:   "https",
 			},
 			&v1.Service{
 				ObjectMeta: metav1.ObjectMeta{
@@ -283,7 +283,7 @@ func TestOpenServiceOptionsGetServiceProxyPath(t *testing.T) {
 					},
 				},
 			},
-			"/api/v1/namespaces/default/services/nginx:https:https/proxy",
+			"/api/v1/namespaces/default/services/https:nginx:https/proxy",
 			"",
 		},
 	}

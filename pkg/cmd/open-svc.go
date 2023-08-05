@@ -47,6 +47,9 @@ var (
 		# Open service/kubernetes-dashboard in namespace/kube-system
 		kubectl open-svc kubernetes-dashboard -n kube-system
 
+		# Open http-monitoring port name of service/istiod in namespace/istio-system
+		kubectl open-svc istiod -n istio-system --svc-port http-monitoring
+
 		# Use "https" scheme with --scheme option for connections between the apiserver
 		# and service/rook-ceph-mgr-dashboard in namespace/rook-ceph
 		kubectl open-svc rook-ceph-mgr-dashboard -n rook-ceph --scheme https
@@ -60,7 +63,7 @@ type OpenServiceOptions struct {
 
 	args      []string
 	port      int
-	portName  string
+	svcPort   string
 	address   string
 	keepalive time.Duration
 	scheme    string
@@ -233,7 +236,7 @@ func (o *OpenServiceOptions) getServiceProxyPath(svc *v1.Service) (string, error
 
 	var port v1.ServicePort
 
-	if len(o.portName) == 0 {
+	if len(o.svcPort) == 0 {
 		port = svc.Spec.Ports[0]
 
 		if l > 1 {
@@ -241,14 +244,14 @@ func (o *OpenServiceOptions) getServiceProxyPath(svc *v1.Service) (string, error
 		}
 	} else {
 		for _, p := range svc.Spec.Ports {
-			if p.Name == o.portName {
+			if p.Name == o.svcPort {
 				port = p
 				break
 			}
 		}
 
 		if len(port.Name) == 0 {
-			return "", fmt.Errorf("port %s not found for service/%s", o.portName, svc.GetName())
+			return "", fmt.Errorf("port %s not found in service/%s", o.svcPort, svc.GetName())
 		}
 	}
 
