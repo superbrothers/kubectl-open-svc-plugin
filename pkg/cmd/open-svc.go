@@ -250,7 +250,7 @@ func (o *OpenServiceOptions) getServiceProxyPath(svc *v1.Service) (string, error
 			}
 		}
 
-		if len(port.Name) == 0 {
+		if port.Name == "" {
 			return "", fmt.Errorf("port %s not found in service/%s", o.svcPort, svc.GetName())
 		}
 	}
