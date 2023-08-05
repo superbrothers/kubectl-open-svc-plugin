@@ -236,7 +236,7 @@ func (o *OpenServiceOptions) getServiceProxyPath(svc *v1.Service) (string, error
 
 	var port v1.ServicePort
 
-	if len(o.svcPort) == 0 {
+	if o.svcPort == "" {
 		port = svc.Spec.Ports[0]
 
 		if l > 1 {
