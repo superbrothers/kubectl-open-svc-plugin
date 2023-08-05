@@ -230,7 +230,7 @@ func TestOpenServiceOptionsGetServiceProxyPath(t *testing.T) {
 				},
 			},
 			"",
-			"port noport not found in service/nginx",
+			"port \"noport\" not found in service/nginx",
 		},
 		{
 			"not specified scheme by service port name",
