@@ -286,6 +286,55 @@ func TestOpenServiceOptionsGetServiceProxyPath(t *testing.T) {
 			"/api/v1/namespaces/default/services/https:nginx:https/proxy",
 			"",
 		},
+		{
+			"specifying port by service port number",
+			&OpenServiceOptions{
+				IOStreams: genericclioptions.NewTestIOStreamsDiscard(),
+				svcPort:   "10254",
+			},
+			&v1.Service{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "nginx",
+					Namespace: "default",
+				},
+				Spec: v1.ServiceSpec{
+					Ports: []v1.ServicePort{
+						{
+							Name: "https",
+							Port: 443,
+						},
+						{
+							Name: "metrics",
+							Port: 10254,
+						},
+					},
+				},
+			},
+			"/api/v1/namespaces/default/services/nginx:metrics/proxy",
+			"",
+		},
+		{
+			"no port name with service port number",
+			&OpenServiceOptions{
+				IOStreams: genericclioptions.NewTestIOStreamsDiscard(),
+				svcPort:   "10254",
+			},
+			&v1.Service{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "nginx",
+					Namespace: "default",
+				},
+				Spec: v1.ServiceSpec{
+					Ports: []v1.ServicePort{
+						{
+							Port: 10254,
+						},
+					},
+				},
+			},
+			"/api/v1/namespaces/default/services/nginx/proxy",
+			"",
+		},
 	}
 
 	for _, tt := range tests {
