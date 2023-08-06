@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"strconv"
 	"time"
 
 	"github.com/pkg/browser"
@@ -47,8 +48,11 @@ var (
 		# Open service/kubernetes-dashboard in namespace/kube-system
 		kubectl open-svc kubernetes-dashboard -n kube-system
 
-		# Open http-monitoring port name of service/istiod in namespace/istio-system
+		# Open port "http-monitoring" of service/istiod in namespace/istio-system
 		kubectl open-svc istiod -n istio-system --svc-port http-monitoring
+
+		# Open port 15014 of service/istiod in namespace/istio-system
+		kubectl open-svc istiod -n istio-system --svc-port 15014
 
 		# Use "https" scheme with --scheme option for connections between the apiserver
 		# and service/rook-ceph-mgr-dashboard in namespace/rook-ceph
@@ -112,7 +116,7 @@ func NewCmdOpenService(streams genericclioptions.IOStreams) *cobra.Command {
 	}
 
 	cmd.Flags().IntVarP(&o.port, "port", "p", o.port, "The port on which to run the proxy. Set to 0 to pick a random port.")
-	cmd.Flags().StringVar(&o.svcPort, "svc-port", o.svcPort, "The service port name. default is empty and uses the first port")
+	cmd.Flags().StringVar(&o.svcPort, "svc-port", o.svcPort, "The service port name or number. default is empty and uses the first port")
 	cmd.Flags().StringVar(&o.address, "address", o.address, "The IP address on which to serve on.")
 	cmd.Flags().DurationVar(&o.keepalive, "keepalive", o.keepalive, "keepalive specifies the keep-alive period for an active network connection. Set to 0 to disable keepalive.")
 	cmd.Flags().StringVar(&o.scheme, "scheme", o.scheme, `The scheme for connections between the apiserver and the service. It must be "http" or "https" if specfied.`)
@@ -234,23 +238,38 @@ func (o *OpenServiceOptions) getServiceProxyPath(svc *v1.Service) (string, error
 		return "", fmt.Errorf("Looks like service/%s is a headless service", svc.GetName())
 	}
 
-	var port v1.ServicePort
+	var port *v1.ServicePort
 
 	if o.svcPort == "" {
-		port = svc.Spec.Ports[0]
+		port = &svc.Spec.Ports[0]
 
 		if l > 1 {
-			fmt.Fprintf(o.ErrOut, "service/%s has %d ports, defaulting port %d\n", svc.GetName(), l, port.Port)
+			fmt.Fprintf(o.ErrOut, "service/%s has %d ports, defaulting port %d. You can use the another port with --svc-port flag.\n", svc.GetName(), l, port.Port)
 		}
 	} else {
+		var isMatchingPort func(p v1.ServicePort) bool
+
+		portNumber, err := strconv.ParseInt(o.svcPort, 10, 32)
+		if err == nil {
+			klog.V(4).Infof("treat svc-port %q as a port number", o.svcPort)
+			isMatchingPort = func(p v1.ServicePort) bool {
+				return p.Port == int32(portNumber)
+			}
+		} else {
+			klog.V(4).Infof("treat svc-port %q as a port name", o.svcPort)
+			isMatchingPort = func(p v1.ServicePort) bool {
+				return p.Name == o.svcPort
+			}
+		}
+
 		for _, p := range svc.Spec.Ports {
-			if p.Name == o.svcPort {
-				port = p
+			if isMatchingPort(p) {
+				port = &p
 				break
 			}
 		}
 
-		if port.Name == "" {
+		if port == nil {
 			return "", fmt.Errorf("port %q not found in service/%s", o.svcPort, svc.GetName())
 		}
 	}

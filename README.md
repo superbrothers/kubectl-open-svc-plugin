@@ -14,7 +14,13 @@ Usage:
 Examples:
   # Open service/kubernetes-dashboard in namespace/kube-system
   kubectl open-svc kubernetes-dashboard -n kube-system
-  
+
+  # Open port "http-monitoring" of service/istiod in namespace/istio-system
+  kubectl open-svc istiod -n istio-system --svc-port http-monitoring
+
+  # Open port 15014 of service/istiod in namespace/istio-system
+  kubectl open-svc istiod -n istio-system --svc-port 15014
+
   # Use "https" scheme with --scheme option for connections between the apiserver
   # and service/rook-ceph-mgr-dashboard in namespace/rook-ceph
   kubectl open-svc rook-ceph-mgr-dashboard -n rook-ceph --scheme https
