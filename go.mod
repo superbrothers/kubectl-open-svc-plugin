@@ -1,6 +1,6 @@
 module github.com/superbrothers/kubectl-open-svc-plugin
 
-go 1.20
+go 1.21
 
 require (
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
