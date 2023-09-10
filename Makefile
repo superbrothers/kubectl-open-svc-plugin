@@ -5,11 +5,11 @@ TOOLS_BIN_DIR := $(CURDIR)/hack/tools/bin
 $(shell mkdir -p $(TOOLS_BIN_DIR))
 
 GORELEASER := $(TOOLS_BIN_DIR)/goreleaser
-GORELEASER_VERSION ?= v1.17.2
+GORELEASER_VERSION ?= v1.20.0
 GOLANGCI_LINT := $(TOOLS_BIN_DIR)/golangci-lint
-GOLANGCI_LINT_VERSION ?= v1.52.2
+GOLANGCI_LINT_VERSION ?= v1.54.2
 VALIDATE_KREW_MAIFEST := $(TOOLS_BIN_DIR)/validate-krew-manifest
-VALIDATE_KREW_MAIFEST_VERSION ?= v0.4.3
+VALIDATE_KREW_MAIFEST_VERSION ?= v0.4.4
 GORELEASER_FILTER_VERSION ?= v0.3.0
 GORELEASER_FILTER := $(TOOLS_BIN_DIR)/goreleaser-filter
 
@@ -47,7 +47,7 @@ test:
 
 .PHONY: validate-krew-manifest
 validate-krew-manifest: $(VALIDATE_KREW_MAIFEST)
-	$(VALIDATE_KREW_MAIFEST) -manifest dist/open-svc.yaml -skip-install
+	$(VALIDATE_KREW_MAIFEST) -manifest dist/krew/open-svc.yaml -skip-install
 
 .PHONY: dist
 dist: $(GORELEASER_FILTER) $(GORELEASER)
