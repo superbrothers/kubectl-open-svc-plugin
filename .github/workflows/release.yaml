@@ -18,6 +18,6 @@ jobs:
         files: dist/!(config.yaml)
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - uses: rajatjindal/krew-release-bot@v0.0.46
+    - uses: rajatjindal/krew-release-bot@v0.0.47
       with:
         krew_template_file: dist/krew/open-svc.yaml
