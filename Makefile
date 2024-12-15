@@ -5,16 +5,16 @@ TOOLS_BIN_DIR := $(CURDIR)/hack/tools/bin
 $(shell mkdir -p $(TOOLS_BIN_DIR))
 
 GORELEASER := $(TOOLS_BIN_DIR)/goreleaser
-GORELEASER_VERSION ?= v1.25.1
+GORELEASER_VERSION ?= v2.4.8
 GOLANGCI_LINT := $(TOOLS_BIN_DIR)/golangci-lint
-GOLANGCI_LINT_VERSION ?= v1.57.2
+GOLANGCI_LINT_VERSION ?= v1.62.2
 VALIDATE_KREW_MAIFEST := $(TOOLS_BIN_DIR)/validate-krew-manifest
 VALIDATE_KREW_MAIFEST_VERSION ?= v0.4.4
 GORELEASER_FILTER_VERSION ?= v0.3.0
 GORELEASER_FILTER := $(TOOLS_BIN_DIR)/goreleaser-filter
 
 $(GORELEASER):
-	GOBIN=$(TOOLS_BIN_DIR) $(GO) install github.com/goreleaser/goreleaser@$(GORELEASER_VERSION)
+	GOBIN=$(TOOLS_BIN_DIR) $(GO) install github.com/goreleaser/goreleaser/v2@$(GORELEASER_VERSION)
 
 $(GOLANGCI_LINT):
 	GOBIN=$(TOOLS_BIN_DIR) $(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
