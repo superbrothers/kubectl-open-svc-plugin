@@ -167,7 +167,7 @@ func (o *OpenServiceOptions) Run() error {
 
 	service, err := client.CoreV1().Services(namespace).Get(context.TODO(), serviceName, metav1.GetOptions{})
 	if err != nil {
-		return fmt.Errorf("failed to get service/%s in namespace/%s: %v", serviceName, namespace, err)
+		return fmt.Errorf("failed to get service/%s in namespace/%s: %w", serviceName, namespace, err)
 	}
 
 	proxyPath, err := o.getServiceProxyPath(service)
@@ -244,7 +244,7 @@ func (o *OpenServiceOptions) getServiceProxyPath(svc *v1.Service) (string, error
 		port = &svc.Spec.Ports[0]
 
 		if l > 1 {
-			_, _ = fmt.Fprintf(o.ErrOut, "service/%s has %d ports, defaulting port %d. You can use the another port with --svc-port flag.\n", svc.GetName(), l, port.Port)
+			_, _ = fmt.Fprintf(o.ErrOut, "service/%s has %d ports, defaulting port %d. You can use another port with the --svc-port flag.\n", svc.GetName(), l, port.Port)
 		}
 	} else {
 		var isMatchingPort func(p v1.ServicePort) bool
