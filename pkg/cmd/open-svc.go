@@ -167,7 +167,7 @@ func (o *OpenServiceOptions) Run() error {
 
 	service, err := client.CoreV1().Services(namespace).Get(context.TODO(), serviceName, metav1.GetOptions{})
 	if err != nil {
-		return fmt.Errorf("Failed to get service/%s in namespace/%s: %v\n", serviceName, namespace, err)
+		return fmt.Errorf("failed to get service/%s in namespace/%s: %v", serviceName, namespace, err)
 	}
 
 	proxyPath, err := o.getServiceProxyPath(service)
@@ -203,13 +203,13 @@ func (o *OpenServiceOptions) Run() error {
 		Handler: reverseProxy,
 	}
 
-	fmt.Fprintf(o.Out, "Starting to serve on %s\n", o.getListenAddr())
+	_, _ = fmt.Fprintf(o.Out, "Starting to serve on %s\n", o.getListenAddr())
 
 	go func() {
 		klog.Fatal(srv.ListenAndServe())
 	}()
 
-	fmt.Fprintf(o.Out, "Opening service/%s in the default browser...\n", serviceName)
+	_, _ = fmt.Fprintf(o.Out, "Opening service/%s in the default browser...\n", serviceName)
 	if err := browser.OpenURL(o.getListenURL()); err != nil {
 		return err
 	}
@@ -235,7 +235,7 @@ func (o *OpenServiceOptions) getServiceProxyPath(svc *v1.Service) (string, error
 	l := len(svc.Spec.Ports)
 
 	if l == 0 {
-		return "", fmt.Errorf("Looks like service/%s is a headless service", svc.GetName())
+		return "", fmt.Errorf("looks like service/%s is a headless service", svc.GetName())
 	}
 
 	var port *v1.ServicePort
@@ -244,7 +244,7 @@ func (o *OpenServiceOptions) getServiceProxyPath(svc *v1.Service) (string, error
 		port = &svc.Spec.Ports[0]
 
 		if l > 1 {
-			fmt.Fprintf(o.ErrOut, "service/%s has %d ports, defaulting port %d. You can use the another port with --svc-port flag.\n", svc.GetName(), l, port.Port)
+			_, _ = fmt.Fprintf(o.ErrOut, "service/%s has %d ports, defaulting port %d. You can use the another port with --svc-port flag.\n", svc.GetName(), l, port.Port)
 		}
 	} else {
 		var isMatchingPort func(p v1.ServicePort) bool

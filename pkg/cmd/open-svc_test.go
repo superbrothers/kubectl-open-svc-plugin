@@ -208,7 +208,7 @@ func TestOpenServiceOptionsGetServiceProxyPath(t *testing.T) {
 				},
 			},
 			"",
-			"Looks like service/nginx is a headless service",
+			"looks like service/nginx is a headless service",
 		},
 		{
 			"no ports by service port name",
